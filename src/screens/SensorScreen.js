@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 const API_BASE_URL = "https://mindapp-simulation.onrender.com";
 
 const SensorScreen = () => {
+  const { t } = useTranslation();
+
   const [sensorData, setSensorData] = useState({
     heartRate: "--",
     spO2: "--",
@@ -32,11 +42,13 @@ const SensorScreen = () => {
         posture: "/sensor/posture",
       };
 
-      const fetchPromises = Object.entries(endpoints).map(async ([key, endpoint]) => {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`);
-        const data = await response.json();
-        return { key, data };
-      });
+      const fetchPromises = Object.entries(endpoints).map(
+        async ([key, endpoint]) => {
+          const response = await fetch(`${API_BASE_URL}${endpoint}`);
+          const data = await response.json();
+          return { key, data };
+        }
+      );
 
       const results = await Promise.all(fetchPromises);
 
@@ -68,25 +80,70 @@ const SensorScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>📊 Live Sensor Dashboard</Text>
+      <Text style={styles.title}>{t("sensorTitle")}</Text>
 
-      <TouchableOpacity 
-        style={[styles.button, isRefreshing && styles.buttonDisabled]} 
-        onPress={handleStartRefresh} 
+      <TouchableOpacity
+        style={[styles.button, isRefreshing && styles.buttonDisabled]}
+        onPress={handleStartRefresh}
         disabled={isRefreshing}
       >
-        <Text style={styles.buttonText}>{isRefreshing ? "Refreshing..." : "Start Live Data"}</Text>
-        {isRefreshing && <ActivityIndicator size="small" color="#FFF" style={styles.loader} />}
+        <Text style={styles.buttonText}>
+          {" "}
+          {isRefreshing ? t("sensorRefresh") : t("sensorStartLive")}
+        </Text>
+        {isRefreshing && (
+          <ActivityIndicator size="small" color="#FFF" style={styles.loader} />
+        )}
       </TouchableOpacity>
 
-      <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>
-        <DataItem icon="heart-pulse" color="#FF6B6B" title="Heart Rate" value={`${sensorData.heartRate?.heart_rate || "--"} BPM`} />
-        <DataItem icon="oxygen-tank" color="#60A5FA" title="SpO2" value={`${sensorData.heartRate?.sp_o2 || "--"}%`} />
-        <DataItem icon="axis-arrow" color="#34D399" title="Gyroscope" value={`X: ${sensorData.gyroscope.x}, Y: ${sensorData.gyroscope.y}, Z: ${sensorData.gyroscope.z}`} />
-        <DataItem icon="axis-arrow" color="#FBBF24" title="Accelerometer" value={`X: ${sensorData.accelerometer.x}, Y: ${sensorData.accelerometer.y}, Z: ${sensorData.accelerometer.z}`} />
-        <DataItem icon="thermometer" color="#FB923C" title="Temperature" value={`${sensorData.temperature?.temperature || "--"}°C`} />
-        <DataItem icon="blood-bag" color="#EF4444" title="Blood Pressure" value={`${sensorData.bloodPressure.systolic}/${sensorData.bloodPressure.diastolic} mmHg`} />
-        <DataItem icon="lungs" color="#10B981" title="Respiration Rate" value={`${sensorData.respirationRate?.respiration_rate || "--"} breaths/min`} />
+      <ScrollView
+        style={styles.dataContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <DataItem
+          icon="heart-pulse"
+          color="#FF6B6B"
+          title={t("heartRate")}
+          value={`${sensorData.heartRate?.heart_rate || "--"} BPM`}
+        />
+        <DataItem
+          icon="oxygen-tank"
+          color="#60A5FA"
+          title={t("spO2")}
+          value={`${sensorData.heartRate?.sp_o2 || "--"}%`}
+        />
+        <DataItem
+          icon="axis-arrow"
+          color="#34D399"
+          title={t("gyroscope")}
+          value={`X: ${sensorData.gyroscope.x}, Y: ${sensorData.gyroscope.y}, Z: ${sensorData.gyroscope.z}`}
+        />
+        <DataItem
+          icon="axis-arrow"
+          color="#FBBF24"
+          title={t("accelerometer")}
+          value={`X: ${sensorData.accelerometer.x}, Y: ${sensorData.accelerometer.y}, Z: ${sensorData.accelerometer.z}`}
+        />
+        <DataItem
+          icon="thermometer"
+          color="#FB923C"
+          title={t("temperature")}
+          value={`${sensorData.temperature?.temperature || "--"}°C`}
+        />
+        <DataItem
+          icon="blood-bag"
+          color="#EF4444"
+          title={t("bloodPressure")}
+          value={`${sensorData.bloodPressure.systolic}/${sensorData.bloodPressure.diastolic} mmHg`}
+        />
+        <DataItem
+          icon="lungs"
+          color="#10B981"
+          title={t("respirationRate")}
+          value={`${
+            sensorData.respirationRate?.respiration_rate || "--"
+          } breaths/min`}
+        />
       </ScrollView>
     </View>
   );
