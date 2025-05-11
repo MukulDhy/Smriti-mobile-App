@@ -77,6 +77,25 @@ const HomeScreen = ({ navigation }) => {
         </View>
       </View>
 
+      {/* Adding the Details of the of the patient and caregiver and family mmbers  */}
+      <View style={styles.boxContainer1}>
+        {/* Row 1 */}
+        <View style={styles.rowInfo}>
+          <TouchableOpacity
+            style={[styles.boxInfo, styles.box2]}
+            onPress={() => navigation.navigate("FamilyMemDetails")}
+          >
+            <Text style={styles.boxTitleBlack}>Friends & Family</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.boxInfo, styles.box1]}
+            onPress={() => navigation.navigate("FriendsFamilyMemoriesScreen")}
+          >
+            <Text style={styles.boxTitleWhite}>Caregiver</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
       {/* "How can we help you today?" Text */}
       <View style={styles.helloContainer}>
         <Text style={styles.helloText}>How can we help you today?</Text>
@@ -180,15 +199,40 @@ const styles = StyleSheet.create({
     marginTop: 25,
     alignItems: "center",
   },
+  boxContainer1: {
+    marginTop: 10,
+    alignItems: "center",
+  },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "90%",
     marginBottom: 20,
   },
+  rowInfo: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    paddingHorizontal: 20,
+    marginBottom: 0,
+  },
   box: {
     width: width * 0.42,
     height: 180,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  boxInfo: {
+    width: width * 0.42,
+    height: 60,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 20,

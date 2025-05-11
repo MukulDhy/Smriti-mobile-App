@@ -37,6 +37,7 @@ import ReminderScreen from "../screens/ReminderScreen";
 import FamilyMemberScreen from "../screens/AddFmDeviceScreen";
 import FamilyMembersPage from "../screens/FamilyMembersPage";
 import DetailsGatheringScreen from "../screens/UserAuth/DetailsGatheringScreen";
+import FamilyMembersDetailsScreen from "../screens/AdditionalScreen/FamilyMemberDetails";
 
 const Tab = createBottomTabNavigator();
 const MainStack = createStackNavigator();
@@ -75,7 +76,9 @@ const ScrollableVoiceRecordingScreen =
   createScrollableScreen(VoiceRecordingScreen);
 const ScrollableFamilyMemberScreen = createScrollableScreen(FamilyMemberScreen);
 const ScrollableFamilyMembersPage = createScrollableScreen(FamilyMembersPage);
-
+const ScollableFamilyMemberDetail = createScrollableScreen(
+  FamilyMembersDetailsScreen
+);
 const HomeStackNavigator = () => {
   const { t } = useTranslation();
   return (
@@ -93,6 +96,10 @@ const HomeStackNavigator = () => {
       <HomeStack.Screen
         name="AddFamily&DeviceScreen"
         component={ScrollableFamilyMemberScreen}
+      />
+      <HomeStack.Screen
+        name="FamilyMemDetails"
+        component={ScollableFamilyMemberDetail}
       />
       <HomeStack.Screen
         name="FamilyMembersPage"
