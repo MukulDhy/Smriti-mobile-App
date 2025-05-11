@@ -132,15 +132,20 @@ const familyMemberSlice = createSlice({
       })
       .addCase(getFamilyMembers.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.list = action.payload || [];
+        state.list = action.payload; // payload will always be an array
         state.lastUpdated = new Date().toISOString();
       })
       .addCase(getFamilyMembers.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload || "Failed to fetch family members";
+        // Only set error if not a 500 error
+        if (!action.payload?.includes("500")) {
+          state.error = action.payload;
+        }
         // Keep previous list if available
+        if (state.list.length === 0) {
+          state.list = [];
+        }
       })
-
       // Get single family member by ID
       .addCase(getFamilyMemberById.pending, (state) => {
         state.isLoading = true;

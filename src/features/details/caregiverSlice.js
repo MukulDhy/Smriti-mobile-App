@@ -17,7 +17,7 @@ export const getCaregiverDetails = createAsyncThunk(
       const data = await fetchCaregiverDetails(token, patientId);
       console.log("Caregiver data in thunk:", data);
 
-      return data || {};
+      return data || null;
     } catch (error) {
       console.error("Error in getCaregiverDetails thunk:", error);
       return rejectWithValue(error.toString());
@@ -106,6 +106,9 @@ const caregiverSlice = createSlice({
       .addCase(getCaregiverDetails.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload || "Failed to fetch caregiver details";
+        // Consider setting data to null or some default value
+        state.data = null;
+        state.lastUpdated = new Date().toISOString();
       })
 
       // Update caregiver

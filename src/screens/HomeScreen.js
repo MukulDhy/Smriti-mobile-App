@@ -33,10 +33,24 @@ const HomeScreen = ({ navigation }) => {
       <View style={styles.topBox}>
         <View style={styles.innerTopBox}>
           <Text style={styles.profileText}>{t("myProfile")}</Text>
-          <Image
-            source={require("../../assets/old-man.jpg")}
-            style={styles.profileImage}
-          />
+          {user?.userType === "caregiver" && (
+            <Image
+              source={require("../../assets/caregiverImg.jpg")}
+              style={styles.profileImage}
+            />
+          )}
+          {user?.userType === "patient" && (
+            <Image
+              source={require("../../assets/old-man.jpg")}
+              style={styles.profileImage}
+            />
+          )}
+          {user?.userType === "family" && (
+            <Image
+              source={require("../../assets/familyImg.jpg")}
+              style={styles.profileImage}
+            />
+          )}
           <Text style={styles.nameText}>
             {user?.name ? user.name : "Guest"}
           </Text>

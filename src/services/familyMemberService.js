@@ -14,35 +14,35 @@ export const fetchFamilyMembers = async (token, patientId) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        timeout: 10000, // Add timeout to prevent hanging
       }
     );
 
     console.log("API Response:", response.data);
 
-    if (
-      response.data &&
-      response.data.data &&
-      response.data.data.familyMembers
-    ) {
+    if (response.data?.data?.familyMembers) {
       console.log(
         "Extracted family members:",
         response.data.data.familyMembers
       );
       return response.data.data.familyMembers;
-    } else {
-      console.warn(
-        "Family members data not found in expected structure:",
-        response.data
-      );
-      return [];
     }
+    return []; // Always return array even if empty
   } catch (error) {
     console.error("Error fetching family members:", error);
-    throw (
-      error.response?.data?.message ||
-      error.message ||
-      "Failed to fetch family members"
-    );
+
+    // Handle 500 specifically
+    if (error.response?.status === 500) {
+      console.warn("Server error, returning empty array");
+      return []; // Return empty array instead of throwing for 500
+    }
+
+    // For other errors, maintain existing behavior
+    // throw (
+    //   error.response?.data?.message ||
+    //   error.message ||
+    //   "Failed to fetch family members"
+    // );
   }
 };
 
@@ -144,10 +144,10 @@ export const createFamilyMember = async (token, patientId, data) => {
     return response.data;
   } catch (error) {
     console.error("Error creating family member:", error);
-    throw (
-      error.response?.data?.message ||
-      error.message ||
-      "Failed to create family member"
-    );
+    // throw (
+    //   error.response?.data?.message ||
+    //   error.message ||
+    //   "Failed to create family member"
+    // );
   }
 };

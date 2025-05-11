@@ -88,10 +88,12 @@ const patientSlice = createSlice({
       })
       .addCase(getPatientDetails.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload || "Failed to fetch patient details";
-        // Don't clear data on error - keep previous data if available
+        state.error = action.payload;
+        // Keep existing data if available for fallback
+        if (!state.data) {
+          state.data = null;
+        }
       })
-
       // Update patient
       .addCase(updatePatient.pending, (state) => {
         state.isLoading = true;

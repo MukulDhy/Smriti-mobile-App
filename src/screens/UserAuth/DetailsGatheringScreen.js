@@ -1,5 +1,5 @@
 // src/screens/DetailsGatheringScreen.js
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -15,69 +15,182 @@ import ApiCallLog from "../../components/ApiCallLog";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import { colors } from "../../constants/colors";
 
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 2000; // 2 seconds
+
 const DetailsGatheringScreen = ({ route, navigation }) => {
   const { patientId } = route.params;
   const dispatch = useDispatch();
-  const { token, user } = useSelector((state) => state.auth);
+  const { token } = useSelector((state) => state.auth);
   const [logs, setLogs] = useState([]);
-  const [overallStatus, setOverallStatus] = useState("loading"); // 'loading', 'success', 'error'
+  const [overallStatus, setOverallStatus] = useState("loading");
+  const [retryCounts, setRetryCounts] = useState({
+    patient: 0,
+    caregiver: 0,
+    familyMembers: 0,
+  });
   const logIdCounter = useRef(0);
 
-  const patientState = useSelector((state) => state.patient);
-  const caregiverState = useSelector((state) => state.caregiver);
-  const familyMemberState = useSelector((state) => state.familyMembers);
-
-  const addLog = (message, status) => {
+  const addLog = useCallback((message, status) => {
     const uniqueId = `log-${Date.now()}-${logIdCounter.current}`;
     logIdCounter.current += 1;
     setLogs((prev) => [...prev, { id: uniqueId, message, status }]);
-  };
+  }, []);
 
-  const fetchAllDetails = async () => {
+  const navigateToHome = useCallback(
+    (loadStatus) => {
+      navigation.navigate("MainApp", {
+        screen: "Home",
+        params: {
+          patientId,
+          dataStatus: loadStatus,
+          ...(route.params || {}),
+        },
+      });
+    },
+    [navigation, patientId, route.params]
+  );
+
+  const fetchWithRetry = useCallback(
+    async (fetchFunction, type) => {
+      let retries = 0;
+      const maxRetries = MAX_RETRIES;
+
+      while (retries < maxRetries) {
+        try {
+          const result = await fetchFunction();
+          return { success: true, data: result };
+        } catch (error) {
+          retries++;
+          setRetryCounts((prev) => ({ ...prev, [type]: retries }));
+
+          if (retries < maxRetries) {
+            addLog(
+              `Retrying ${type} fetch (attempt ${retries}/${maxRetries})...`,
+              "warning"
+            );
+            await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+          }
+        }
+      }
+
+      return { success: false };
+    },
+    [addLog]
+  );
+
+  const fetchAllDetails = useCallback(async () => {
     try {
       setOverallStatus("loading");
-      // Clear previous logs when retrying
       setLogs([]);
-      // Reset counter when starting fresh
       logIdCounter.current = 0;
+      setRetryCounts({
+        patient: 0,
+        caregiver: 0,
+        familyMembers: 0,
+      });
 
       addLog("Starting data synchronization...", "info");
 
-      // Fetch patient details
+      const loadStatus = {
+        patient: false,
+        caregiver: false,
+        familyMembers: false,
+      };
+
+      // Fetch patient details (critical) with retry
       addLog("Fetching patient information...", "info");
-      await dispatch(getPatientDetails({ token, patientId })).unwrap();
+      const patientResult = await fetchWithRetry(
+        () => dispatch(getPatientDetails({ token, patientId })).unwrap(),
+        "patient"
+      );
+
+      if (!patientResult.success) {
+        addLog("Failed to load patient data after multiple attempts", "error");
+        setOverallStatus("error");
+        return;
+      }
+
+      loadStatus.patient = true;
       addLog("Patient data loaded successfully", "success");
 
-      // // Fetch caregiver details
-      // addLog("Fetching caregiver information...", "info");
-      // await dispatch(getCaregiverDetails({ token, patientId })).unwrap();
-      // addLog("Caregiver data loaded successfully", "success");
+      // Fetch caregiver details (non-critical) with retry
+      addLog("Fetching caregiver information...", "info");
+      const caregiverResult = await fetchWithRetry(
+        () => dispatch(getCaregiverDetails({ token, patientId })).unwrap(),
+        "caregiver"
+      );
 
-      // // Fetch family members
-      // addLog("Fetching family members...", "info");
-      // await dispatch(getFamilyMembers({ token, patientId })).unwrap();
-      // addLog("Family members loaded successfully", "success");
+      if (caregiverResult.success) {
+        loadStatus.caregiver = true;
+        addLog("Caregiver data loaded successfully", "success");
+      } else {
+        addLog(
+          "Caregiver data not available after multiple attempts",
+          "warning"
+        );
+      }
 
-      setOverallStatus("success");
-      addLog("All data loaded successfully!", "success");
+      // Fetch family members (semi-critical) with retry
+      addLog("Fetching family members...", "info");
+      const familyResult = await fetchWithRetry(
+        () => dispatch(getFamilyMembers({ token, patientId })).unwrap(),
+        "familyMembers"
+      );
 
-      // Navigate to patient details after a brief delay to show success
-      setTimeout(() => {
-        navigation.navigate("MainApp", { screen: "Home" });
-      }, 1000);
+      if (familyResult.success) {
+        loadStatus.familyMembers = true;
+        addLog("Family members loaded successfully", "success");
+      } else {
+        addLog(
+          "Family members data not available after multiple attempts",
+          "warning"
+        );
+      }
+
+      // Determine overall status
+      const optionalDataLoaded =
+        loadStatus.caregiver && loadStatus.familyMembers;
+      const finalStatus = optionalDataLoaded ? "success" : "partial";
+      setOverallStatus(finalStatus);
+
+      addLog(
+        finalStatus === "success"
+          ? "All data loaded successfully!"
+          : "Critical data loaded with some optional data missing",
+        finalStatus === "success" ? "success" : "warning"
+      );
+
+      // Navigate after showing success for 1 second
+      setTimeout(() => navigateToHome(loadStatus), 5000);
     } catch (error) {
       setOverallStatus("error");
-      addLog(`Data synchronization failed: ${error}`, "error");
+      addLog(`Data synchronization failed: ${error.message || error}`, "error");
+      console.error("Unexpected error in fetchAllDetails:", error);
     }
-  };
+  }, [addLog, dispatch, fetchWithRetry, navigateToHome, patientId, token]);
 
-  // Extract fetchAllDetails function to make it reusable for retry functionality
   useEffect(() => {
     fetchAllDetails();
-  }, []);
+  }, [fetchAllDetails]);
 
   const handleTryAgain = () => {
     fetchAllDetails();
+  };
+
+  const handleContinue = () => {
+    navigation.replace("MainApp", {
+      screen: "Home",
+      params: {
+        patientId,
+        dataStatus: {
+          patient: true,
+          caregiver: retryCounts.caregiver < MAX_RETRIES,
+          familyMembers: retryCounts.familyMembers < MAX_RETRIES,
+        },
+        ...(route.params || {}),
+      },
+    });
   };
 
   if (overallStatus === "loading" && logs.length === 0) {
@@ -95,7 +208,10 @@ const DetailsGatheringScreen = ({ route, navigation }) => {
         Please wait while we load your information
       </Text>
 
-      <ScrollView style={styles.logsContainer}>
+      <ScrollView
+        style={styles.logsContainer}
+        contentContainerStyle={styles.logsContentContainer}
+      >
         {logs.map((log) => (
           <ApiCallLog key={log.id} message={log.message} status={log.status} />
         ))}
@@ -104,27 +220,48 @@ const DetailsGatheringScreen = ({ route, navigation }) => {
       {overallStatus === "loading" && (
         <View style={styles.loadingFooter}>
           <LoadingIndicator size="small" text="Loading remaining data..." />
+          {Object.values(retryCounts).some((count) => count > 0) && (
+            <Text style={styles.retryInfo}>
+              Retrying failed requests (
+              {Object.values(retryCounts).filter((count) => count > 0).length}{" "}
+              active)
+            </Text>
+          )}
         </View>
       )}
 
       {overallStatus === "error" && (
         <View style={styles.errorFooter}>
           <Text style={styles.errorText}>
-            Some data failed to load. You can try again or continue with partial
-            data.
+            {retryCounts.patient >= MAX_RETRIES
+              ? "Failed to load critical patient data after multiple attempts."
+              : "Some data failed to load. You can try again or continue with available data."}
           </Text>
           <View style={styles.buttonRow}>
             <TouchableOpacity
               style={styles.tryAgainButton}
               onPress={handleTryAgain}
+              disabled={retryCounts.patient >= MAX_RETRIES}
             >
-              <Text style={styles.tryAgainButtonText}>Try Again</Text>
+              <Text style={styles.tryAgainButtonText}>
+                {retryCounts.patient >= MAX_RETRIES
+                  ? "Max Retries Reached"
+                  : "Try Again"}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.continueButton}
-              onPress={() => navigation.replace("MainApp", "Home")}
+              style={[
+                styles.continueButton,
+                retryCounts.patient >= MAX_RETRIES && styles.disabledButton,
+              ]}
+              onPress={handleContinue}
+              disabled={retryCounts.patient >= MAX_RETRIES}
             >
-              <Text style={styles.continueButtonText}>Continue Anyway</Text>
+              <Text style={styles.continueButtonText}>
+                {retryCounts.patient >= MAX_RETRIES
+                  ? "Cannot Continue"
+                  : "Continue Anyway"}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -160,10 +297,19 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: 20,
   },
+  logsContentContainer: {
+    paddingBottom: 10,
+  },
   loadingFooter: {
     padding: 10,
     borderTopWidth: 1,
     borderTopColor: colors.lightGray,
+    alignItems: "center",
+  },
+  retryInfo: {
+    color: colors.gray,
+    marginTop: 5,
+    fontSize: 12,
   },
   errorFooter: {
     padding: 15,
@@ -173,10 +319,12 @@ const styles = StyleSheet.create({
   errorText: {
     color: colors.error,
     marginBottom: 10,
+    textAlign: "center",
   },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 10,
   },
   tryAgainButton: {
     backgroundColor: colors.primary,
@@ -191,11 +339,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   continueButton: {
-    backgroundColor: colors.error,
+    backgroundColor: colors.secondary,
     padding: 12,
     borderRadius: 6,
     alignItems: "center",
     flex: 1,
+  },
+  disabledButton: {
+    backgroundColor: colors.disabled,
   },
   continueButtonText: {
     color: colors.white,
