@@ -89,7 +89,7 @@ const HomeScreen = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.boxInfo, styles.box1]}
-            onPress={() => navigation.navigate("FriendsFamilyMemoriesScreen")}
+            onPress={() => navigation.navigate("CarePatientDetails")}
           >
             <Text style={styles.boxTitleWhite}>Caregiver</Text>
           </TouchableOpacity>

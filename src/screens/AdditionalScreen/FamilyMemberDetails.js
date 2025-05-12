@@ -137,11 +137,25 @@ const FamilyMembersScreen = () => {
 
       {isPatient && renderPatientDetails()}
       {renderFamilyMembers()}
-
+      <View>
+        <Text style={{ paddingHorizontal: 5, color: "red" }}>
+          You dont have the permission to add the Family memeber
+        </Text>
+      </View>
       {isPatient && (
-        <TouchableOpacity style={styles.addButton}>
+        <TouchableOpacity
+          style={[styles.addButton, isPatient && styles.disabledButton]}
+          disabled={isPatient}
+        >
           {renderIcon("add")}
-          <Text style={styles.addButtonText}>Add Family Member</Text>
+          <Text
+            style={[
+              styles.addButtonText,
+              isPatient && styles.disabledButtonText,
+            ]}
+          >
+            Add Family Member
+          </Text>
         </TouchableOpacity>
       )}
     </ScrollView>
@@ -149,6 +163,27 @@ const FamilyMembersScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  addButton: {
+    // Your existing button styles
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+    backgroundColor: "#4CAF50", // Example green color
+    borderRadius: 5,
+  },
+  disabledButton: {
+    backgroundColor: "#cccccc", // Gray background when disabled
+    opacity: 0.6, // Slightly transparent
+  },
+  addButtonText: {
+    color: "white",
+    marginLeft: 5,
+    fontSize: 16,
+  },
+  disabledButtonText: {
+    color: "#666666", // Darker gray text when disabled
+  },
   container: {
     flex: 1,
     backgroundColor: colors.background,

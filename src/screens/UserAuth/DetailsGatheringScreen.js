@@ -15,19 +15,16 @@ import ApiCallLog from "../../components/ApiCallLog";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import { colors } from "../../constants/colors";
 
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 2000; // 2 seconds
-
 const DetailsGatheringScreen = ({ route, navigation }) => {
   const { patientId } = route.params;
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
   const [logs, setLogs] = useState([]);
   const [overallStatus, setOverallStatus] = useState("loading");
-  const [retryCounts, setRetryCounts] = useState({
-    patient: 0,
-    caregiver: 0,
-    familyMembers: 0,
+  const [errors, setErrors] = useState({
+    patient: null,
+    caregiver: null,
+    familyMembers: null,
   });
   const logIdCounter = useRef(0);
 
@@ -51,43 +48,15 @@ const DetailsGatheringScreen = ({ route, navigation }) => {
     [navigation, patientId, route.params]
   );
 
-  const fetchWithRetry = useCallback(
-    async (fetchFunction, type) => {
-      let retries = 0;
-      const maxRetries = MAX_RETRIES;
-
-      while (retries < maxRetries) {
-        try {
-          const result = await fetchFunction();
-          return { success: true, data: result };
-        } catch (error) {
-          retries++;
-          setRetryCounts((prev) => ({ ...prev, [type]: retries }));
-
-          if (retries < maxRetries) {
-            addLog(
-              `Retrying ${type} fetch (attempt ${retries}/${maxRetries})...`,
-              "warning"
-            );
-            await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
-          }
-        }
-      }
-
-      return { success: false };
-    },
-    [addLog]
-  );
-
   const fetchAllDetails = useCallback(async () => {
     try {
       setOverallStatus("loading");
       setLogs([]);
       logIdCounter.current = 0;
-      setRetryCounts({
-        patient: 0,
-        caregiver: 0,
-        familyMembers: 0,
+      setErrors({
+        patient: null,
+        caregiver: null,
+        familyMembers: null,
       });
 
       addLog("Starting data synchronization...", "info");
@@ -98,77 +67,58 @@ const DetailsGatheringScreen = ({ route, navigation }) => {
         familyMembers: false,
       };
 
-      // Fetch patient details (critical) with retry
+      // Fetch patient details (critical)
       addLog("Fetching patient information...", "info");
-      const patientResult = await fetchWithRetry(
-        () => dispatch(getPatientDetails({ token, patientId })).unwrap(),
-        "patient"
-      );
-
-      if (!patientResult.success) {
-        addLog("Failed to load patient data after multiple attempts", "error");
-        setOverallStatus("error");
-        return;
+      try {
+        await dispatch(getPatientDetails({ token, patientId })).unwrap();
+        loadStatus.patient = true;
+        addLog("Patient data loaded successfully", "success");
+      } catch (error) {
+        setErrors((prev) => ({ ...prev, patient: error }));
+        addLog(`Failed to load patient data: ${error.message}`, "error");
       }
 
-      loadStatus.patient = true;
-      addLog("Patient data loaded successfully", "success");
-
-      // Fetch caregiver details (non-critical) with retry
+      // Fetch caregiver details (non-critical)
       addLog("Fetching caregiver information...", "info");
-      const caregiverResult = await fetchWithRetry(
-        () => dispatch(getCaregiverDetails({ token, patientId })).unwrap(),
-        "caregiver"
-      );
-
-      if (caregiverResult.success) {
+      try {
+        await dispatch(getCaregiverDetails({ token, patientId })).unwrap();
         loadStatus.caregiver = true;
         addLog("Caregiver data loaded successfully", "success");
-      } else {
-        addLog(
-          "Caregiver data not available after multiple attempts",
-          "warning"
-        );
+      } catch (error) {
+        setErrors((prev) => ({ ...prev, caregiver: error }));
+        addLog(`Failed to load caregiver data: ${error.message}`, "warning");
       }
 
-      // Fetch family members (semi-critical) with retry
+      // Fetch family members (semi-critical)
       addLog("Fetching family members...", "info");
-      const familyResult = await fetchWithRetry(
-        () => dispatch(getFamilyMembers({ token, patientId })).unwrap(),
-        "familyMembers"
-      );
-
-      if (familyResult.success) {
+      try {
+        await dispatch(getFamilyMembers({ token, patientId })).unwrap();
         loadStatus.familyMembers = true;
         addLog("Family members loaded successfully", "success");
-      } else {
-        addLog(
-          "Family members data not available after multiple attempts",
-          "warning"
-        );
+      } catch (error) {
+        setErrors((prev) => ({ ...prev, familyMembers: error }));
+        addLog(`Failed to load family members: ${error.message}`, "warning");
       }
 
       // Determine overall status
-      const optionalDataLoaded =
-        loadStatus.caregiver && loadStatus.familyMembers;
-      const finalStatus = optionalDataLoaded ? "success" : "partial";
-      setOverallStatus(finalStatus);
-
-      addLog(
-        finalStatus === "success"
-          ? "All data loaded successfully!"
-          : "Critical data loaded with some optional data missing",
-        finalStatus === "success" ? "success" : "warning"
-      );
-
-      // Navigate after showing success for 1 second
-      setTimeout(() => navigateToHome(loadStatus), 5000);
+      if (!loadStatus.patient) {
+        setOverallStatus("error");
+        addLog("Critical patient data failed to load", "error");
+      } else if (!loadStatus.caregiver || !loadStatus.familyMembers) {
+        setOverallStatus("partial");
+        addLog("Some optional data failed to load", "warning");
+      } else {
+        setOverallStatus("success");
+        addLog("All data loaded successfully!", "success");
+        // Navigate after showing success for 1 second
+        setTimeout(() => navigateToHome(loadStatus), 1000);
+      }
     } catch (error) {
       setOverallStatus("error");
       addLog(`Data synchronization failed: ${error.message || error}`, "error");
       console.error("Unexpected error in fetchAllDetails:", error);
     }
-  }, [addLog, dispatch, fetchWithRetry, navigateToHome, patientId, token]);
+  }, [addLog, dispatch, navigateToHome, patientId, token]);
 
   useEffect(() => {
     fetchAllDetails();
@@ -184,9 +134,9 @@ const DetailsGatheringScreen = ({ route, navigation }) => {
       params: {
         patientId,
         dataStatus: {
-          patient: true,
-          caregiver: retryCounts.caregiver < MAX_RETRIES,
-          familyMembers: retryCounts.familyMembers < MAX_RETRIES,
+          patient: errors.patient === null,
+          caregiver: errors.caregiver === null,
+          familyMembers: errors.familyMembers === null,
         },
         ...(route.params || {}),
       },
@@ -220,47 +170,46 @@ const DetailsGatheringScreen = ({ route, navigation }) => {
       {overallStatus === "loading" && (
         <View style={styles.loadingFooter}>
           <LoadingIndicator size="small" text="Loading remaining data..." />
-          {Object.values(retryCounts).some((count) => count > 0) && (
-            <Text style={styles.retryInfo}>
-              Retrying failed requests (
-              {Object.values(retryCounts).filter((count) => count > 0).length}{" "}
-              active)
-            </Text>
-          )}
         </View>
       )}
 
-      {overallStatus === "error" && (
+      {(overallStatus === "error" || overallStatus === "partial") && (
         <View style={styles.errorFooter}>
           <Text style={styles.errorText}>
-            {retryCounts.patient >= MAX_RETRIES
-              ? "Failed to load critical patient data after multiple attempts."
+            {errors.patient
+              ? `Critical error: ${errors.patient.message}`
               : "Some data failed to load. You can try again or continue with available data."}
           </Text>
+
+          {/* Show specific error messages */}
+          {errors.caregiver && (
+            <Text style={styles.specificError}>
+              Caregiver: {errors.caregiver.message}
+            </Text>
+          )}
+          {errors.familyMembers && (
+            <Text style={styles.specificError}>
+              Family Members: {errors.familyMembers.message}
+            </Text>
+          )}
+
           <View style={styles.buttonRow}>
             <TouchableOpacity
               style={styles.tryAgainButton}
               onPress={handleTryAgain}
-              disabled={retryCounts.patient >= MAX_RETRIES}
             >
-              <Text style={styles.tryAgainButtonText}>
-                {retryCounts.patient >= MAX_RETRIES
-                  ? "Max Retries Reached"
-                  : "Try Again"}
-              </Text>
+              <Text style={styles.tryAgainButtonText}>Try Again</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
                 styles.continueButton,
-                retryCounts.patient >= MAX_RETRIES && styles.disabledButton,
+                errors.patient && styles.disabledButton,
               ]}
               onPress={handleContinue}
-              disabled={retryCounts.patient >= MAX_RETRIES}
+              disabled={!!errors.patient}
             >
               <Text style={styles.continueButtonText}>
-                {retryCounts.patient >= MAX_RETRIES
-                  ? "Cannot Continue"
-                  : "Continue Anyway"}
+                {errors.patient ? "Cannot Continue" : "Continue Anyway"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -306,11 +255,6 @@ const styles = StyleSheet.create({
     borderTopColor: colors.lightGray,
     alignItems: "center",
   },
-  retryInfo: {
-    color: colors.gray,
-    marginTop: 5,
-    fontSize: 12,
-  },
   errorFooter: {
     padding: 15,
     backgroundColor: colors.errorLight,
@@ -320,6 +264,11 @@ const styles = StyleSheet.create({
     color: colors.error,
     marginBottom: 10,
     textAlign: "center",
+  },
+  specificError: {
+    color: colors.error,
+    fontSize: 12,
+    marginBottom: 5,
   },
   buttonRow: {
     flexDirection: "row",

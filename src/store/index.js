@@ -7,6 +7,7 @@ import reminderReducer from "../features/reminders/reminderSlice";
 import patientReducer from "../features/details/patientSlice";
 import caregiverReducer from "../features/details/caregiverSlice";
 import familyMemberReducer from "../features/details/familyMemberSlice";
+import connectionReducer from "./actions/connectionReducer";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   patient: patientReducer,
   caregiver: caregiverReducer,
   familyMember: familyMemberReducer,
+  connections: connectionReducer,
 });
 
 const persistConfig = {
