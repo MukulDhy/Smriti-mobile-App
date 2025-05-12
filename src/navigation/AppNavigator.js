@@ -15,7 +15,7 @@ import { ThemeColors, useTheme } from "../themes/ThemeContext";
 
 // Screens for main app (tab navigator)
 import HomeScreen from "../screens/HomeScreen";
-import AddReminderScreen from "../screens/AddReminderScreen";
+// import AddReminderScreen from "../screens/AddReminderScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 
 // Screens for auth stack
@@ -33,12 +33,16 @@ import FamilyLoginScreen from "../screens/UserAuth/FamilyLoginScreen";
 import SensorScreen from "../screens/SensorScreen";
 import FriendsFamilyMemoriesScreen from "../screens/FriendsFamilyMemoriesScreen";
 import VoiceRecordingScreen from "../screens/VoiceRecordingScreen";
-import ReminderScreen from "../screens/ReminderScreen";
+import ReminderScreen from "../screens/ReminderScreen1";
 import FamilyMemberScreen from "../screens/AddFmDeviceScreen";
 import FamilyMembersPage from "../screens/FamilyMembersPage";
 import DetailsGatheringScreen from "../screens/UserAuth/DetailsGatheringScreen";
 import FamilyMembersDetailsScreen from "../screens/AdditionalScreen/FamilyMemberDetails";
 import CarePatientDetails from "../screens/AdditionalScreen/CarePatientDetails";
+
+import RemindersScreen from "../screens/Reminder/RemindersScreen";
+import AddReminderScreen from "../screens/Reminder/AddReminderScreen";
+import ReminderPage from "../screens/Reminder/ReminderPage";
 
 const Tab = createBottomTabNavigator();
 const MainStack = createStackNavigator();
@@ -66,8 +70,11 @@ const createScrollableScreen = (ScreenComponent) => (props) =>
 // Create scrollable versions of all screens
 const ScrollableHomeScreen = createScrollableScreen(HomeScreen);
 
-const ScrollableReminderScreen = createScrollableScreen(ReminderScreen);
+// const ScrollableReminderScreen = createScrollableScreen(ReminderScreen);
+const ScrollableReminderScreen = createScrollableScreen(RemindersScreen);
 const ScrollableAddReminderScreen = createScrollableScreen(AddReminderScreen);
+const ScrollableReminderPage = createScrollableScreen(ReminderPage);
+
 const ScrollableSettingsScreen = createScrollableScreen(SettingsScreen);
 const ScrollableSensorScreen = createScrollableScreen(SensorScreen);
 const ScrollableFriendsFamilyMemoriesScreen = createScrollableScreen(
@@ -94,6 +101,10 @@ const HomeStackNavigator = () => {
       <HomeStack.Screen
         name="ReminderScreen"
         component={ScrollableReminderScreen}
+      />
+      <HomeStack.Screen
+        name="ReminderPage"
+        component={ScrollableReminderPage}
       />
       <HomeStack.Screen
         name="AddFamily&DeviceScreen"

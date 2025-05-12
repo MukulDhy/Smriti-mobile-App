@@ -98,7 +98,7 @@ const resources = {
       enjoyPuzzle: "🧩 Enjoy the calm and solve the puzzle!",
       chooseLevel: "Choose Level",
       selectDifficulty: "Select Difficulty",
-      home: "↩ Home",
+      home: "Home",
 
       //breathing game
       breathingExerciseTitle: "Breathing Exercise",
@@ -207,7 +207,7 @@ const resources = {
       enjoyPuzzle: "🧩 शांति का आनंद लें और पज़ल हल करें!",
       chooseLevel: "स्तर चुनें",
       selectDifficulty: "कठिनाई स्तर चुनें",
-      home: "↩ होम",
+      home: "होम",
 
       //breathing game
       breathingExerciseTitle: "सांस लेने का व्यायाम",

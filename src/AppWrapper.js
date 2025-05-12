@@ -9,6 +9,9 @@ import { ActivityIndicator, View, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useTheme } from "./themes/ThemeContext";
 import App from "./App";
+import { ReminderProvider } from "./contexts/ReminderContext";
+import { WebSocketProvider } from "./contexts/WebSocketContext";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const AppWrapper = () => {
   const { theme } = useTheme();
@@ -33,12 +36,18 @@ const AppWrapper = () => {
         }
         persistor={persistor}
       >
-        <I18nextProvider i18n={i18n}>
-          <PaperProvider theme={theme}>
-            <StatusBar style={theme.dark ? "light" : "dark"} />
-            <App />
-          </PaperProvider>
-        </I18nextProvider>
+        <AuthProvider>
+          <ReminderProvider>
+            <WebSocketProvider>
+              <I18nextProvider i18n={i18n}>
+                <PaperProvider theme={theme}>
+                  <StatusBar style={theme.dark ? "light" : "dark"} />
+                  <App />
+                </PaperProvider>
+              </I18nextProvider>
+            </WebSocketProvider>
+          </ReminderProvider>
+        </AuthProvider>
       </PersistGate>
     </ReduxProvider>
   );

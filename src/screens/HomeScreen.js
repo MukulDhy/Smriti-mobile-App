@@ -133,6 +133,25 @@ const HomeScreen = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
         </View>
+        {/* Row 3 */}
+        <View style={styles.row}>
+          <TouchableOpacity
+            style={[styles.box, styles.box1]}
+            onPress={() => navigation.navigate("ReminderPage")}
+          >
+            <Text style={styles.boxTitleBlack}>Remidner page</Text>
+            <Text style={styles.boxDescBlack}>Monitor health metrics.</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.box, styles.box4]}
+            onPress={() => navigation.navigate("ReminderScreen")}
+          >
+            <Text style={styles.boxTitleBlack}>Reminder screen</Text>
+            <Text style={styles.boxDescBlack}>
+              Meditation and stress relief.
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
