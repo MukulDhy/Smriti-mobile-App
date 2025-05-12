@@ -34,7 +34,6 @@ const WelcomeScreen = ({ navigation }) => {
         });
         return;
       }
-      navigation.navigate("MainApp", "Home");
     }
   };
 

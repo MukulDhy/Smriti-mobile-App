@@ -53,7 +53,6 @@ const CaregiverLoginScreen = ({ navigation }) => {
               patientId: data?.user?.patient || null,
               caregiverId: data.user?._id || null,
             });
-            navigation.navigate("MainApp", "Home");
           }
         },
         (error) => {

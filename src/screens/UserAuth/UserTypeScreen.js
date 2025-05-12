@@ -25,11 +25,15 @@ const UserSelectionScreen = () => {
   const handleNext = () => {
     if (selectedRole === "patient") {
       navigation.navigate("PatientSignupScreen");
+      return;
     } else if (selectedRole === "caregiver") {
       navigation.navigate("CaregiverSignupScreen");
+      return;
     } else if (selectedRole === "family") {
       navigation.navigate("FamilySignupScreen"); // Or whatever screen you want for family members
+      return;
     }
+    return;
   };
 
   return (
