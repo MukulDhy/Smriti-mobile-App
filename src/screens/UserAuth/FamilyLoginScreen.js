@@ -8,40 +8,57 @@ import {
   Linking,
   Image,
   ScrollView,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { makeApiRequest } from "../../utils/api-error-utils";
 import API_BASE_URL from "../../config";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../../features/auth/authSlice";
 
 const FamilyLoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter both email and password");
+      return;
+    }
+    setIsLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      const options = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log("Login Successful:", data);
-        navigation.navigate("FamilyDashboard");
-      } else {
-        console.log("Login Failed:", data);
-        alert(data.message || "Login failed, please try again.");
-      }
+        body: JSON.stringify({ email, password }),
+      };
+      makeApiRequest(
+        `${API_BASE_URL}/api/auth/login`,
+        options,
+        async (data) => {
+          if (data?.user && data?.token) {
+            await dispatch(loginUser(data?.user, data?.token));
+            navigation.navigate("DetailsGathering", {
+              patientId: data?.user?.patient,
+              caregiverId: null,
+            });
+          }
+        },
+        (error) => {
+          Alert.alert("Error", error);
+        }
+      );
     } catch (error) {
-      console.error("Error during login:", error);
-      alert("Something went wrong, please try again later.");
+      Alert.alert("Error", "An unexpected error occurred");
+      console.error("Login error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -108,8 +125,16 @@ const FamilyLoginScreen = ({ navigation }) => {
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.buttonText}>Log In</Text>
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={handleLogin}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Log In</Text>
+            )}
           </TouchableOpacity>
 
           <Text style={styles.orText}>Or</Text>
@@ -119,19 +144,19 @@ const FamilyLoginScreen = ({ navigation }) => {
               style={[styles.socialButton, { backgroundColor: "#DB4437" }]}
               onPress={() => openURL("https://accounts.google.com")}
             >
-              <Ionicons name="logo-google" size={24} color="white" />
+              <FontAwesome name="google" size={24} color="white" />
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.socialButton, { backgroundColor: "#1DA1F2" }]}
               onPress={() => openURL("https://twitter.com/login")}
             >
-              <Ionicons name="logo-twitter" size={24} color="white" />
+              <FontAwesome name="twitter" size={24} color="white" />
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.socialButton, { backgroundColor: "#1877F2" }]}
               onPress={() => openURL("https://www.facebook.com/login")}
             >
-              <Ionicons name="logo-facebook" size={24} color="white" />
+              <FontAwesome name="facebook" size={24} color="white" />
             </TouchableOpacity>
           </View>
 

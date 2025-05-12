@@ -7,23 +7,64 @@ import {
   StyleSheet,
   Linking,
   Image,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { makeApiRequest } from "../../utils/api-error-utils";
 import API_BASE_URL from "../../config";
+import { useDispatch } from "react-redux";
+import {
+  loginSuccess,
+  loginUser,
+  storeAuthData,
+} from "../../features/auth/authSlice";
 
 const CaregiverLoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter both email and password");
+      return;
+    }
+    setIsLoading(true);
     try {
-      const response = await login(email, password);
-      // Store the token (you might want to use AsyncStorage or secure storage)
-      // Then navigate to home
-      navigation.navigate("HomeScreen");
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      };
+      makeApiRequest(
+        `${API_BASE_URL}/api/auth/login`,
+        options,
+        async (data) => {
+          if (data?.user && data?.token) {
+            await dispatch(loginUser(data?.user, data?.token));
+            // Alert.alert("Success", "Login successful!");
+            console.log("DATATATAT USER ID ==== ", data);
+            navigation.navigate("DetailsGathering", {
+              patientId: data?.user?.patient || null,
+              caregiverId: data.user?._id || null,
+            });
+            navigation.navigate("MainApp", "Home");
+          }
+        },
+        (error) => {
+          Alert.alert("Error", error);
+        }
+      );
     } catch (error) {
-      alert(error.message || "Login failed");
+      Alert.alert("Error", "An unexpected error occurred");
+      console.error("Login error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -56,6 +97,7 @@ const CaregiverLoginScreen = ({ navigation }) => {
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
+            placeholder="Enter email"
           />
         </View>
 
@@ -68,6 +110,7 @@ const CaregiverLoginScreen = ({ navigation }) => {
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
+              placeholder="Enter password"
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
               <Ionicons
@@ -85,8 +128,16 @@ const CaregiverLoginScreen = ({ navigation }) => {
         </TouchableOpacity>
 
         {/* Login Button */}
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={handleLogin}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Login</Text>
+          )}
         </TouchableOpacity>
 
         {/* OR Section */}
@@ -222,7 +273,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   orText: {
-    // marginVertical: 20,
     fontSize: 16,
     fontWeight: "bold",
     color: "#777",

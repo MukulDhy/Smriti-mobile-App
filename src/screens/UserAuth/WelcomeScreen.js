@@ -22,9 +22,19 @@ const WelcomeScreen = ({ navigation }) => {
       navigation.navigate("UserTypeScreen");
       return;
     } else if (auth.user && auth.token) {
-      navigation.navigate("DetailsGathering", {
-        patientId: auth.user?._id,
-      });
+      if (auth.user?.userType === "caregiver") {
+        navigation.navigate("DetailsGathering", {
+          patientId: auth.user?.patient || null,
+          caregiverId: auth.user?._id || null,
+        });
+        return;
+      } else if (auth.user?.userType === "patient") {
+        navigation.navigate("DetailsGathering", {
+          patientId: auth.user?._id || auth.user?.patient || null,
+        });
+        return;
+      }
+      navigation.navigate("MainApp", "Home");
     }
   };
 

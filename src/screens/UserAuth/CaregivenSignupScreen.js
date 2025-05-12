@@ -10,55 +10,57 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { makeApiRequest } from "../../utils/api-error-utils";
 import API_BASE_URL from "../../config";
 
 const CaregiverSignupScreen = ({ navigation }) => {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [phone, setPhone] = useState("");
-  const [patientId, setPatientId] = useState("");
-  const [deviceId, setDeviceId] = useState("");
-  const [relationship, setRelationship] = useState("");
+  // Pre-filled test data (remove in production)
+  const [fullName, setFullName] = useState("Caregiver Test");
+  const [email, setEmail] = useState("caregiver1@gmail.com");
+  const [password, setPassword] = useState("caregiver@1234");
+  const [showPassword, setShowPassword] = useState(true);
+  const [phone, setPhone] = useState("9999849791");
+  const [patientId, setPatientId] = useState("12345");
+  const [deviceId, setDeviceId] = useState("device123");
+  const [relationship, setRelationship] = useState("Family Friend");
   const [isAlsoFamilyMember, setIsAlsoFamilyMember] = useState(true);
 
-  const handleSignup = async () => {
-    try {
-      const caregiverData = {
-        name: fullName,
-        email: email,
-        password: password,
-        phone: phone,
-        userType: "Caregiver",
-        patient: patientId,
-        deviceId: deviceId,
-        relationship: relationship,
-        isAlsoFamilyMember: isAlsoFamilyMember,
-      };
+  const handleSignup = () => {
+    const caregiverData = {
+      name: fullName,
+      email: email,
+      password: password,
+      phone: phone,
+      userType: "caregiver",
+      patientEmail: patientId,
+      deviceId: deviceId,
+      relationship: relationship,
+      isAlsoFamilyMember: isAlsoFamilyMember,
+    };
 
-      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(caregiverData),
-      });
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(caregiverData),
+    };
 
-      const data = await response.json();
-
-      if (response.ok) {
+    makeApiRequest(
+      `${API_BASE_URL}/api/auth/register`,
+      options,
+      (data) => {
+        // Success callback
         console.log("Caregiver Signup Successful:", data);
         alert("Registration successful!");
         navigation.navigate("CaregiverLoginScreen");
-      } else {
-        console.log("Signup Failed:", data);
-        alert(data.message || "Registration failed, please try again.");
+      },
+      (errorMessage) => {
+        // Error callback
+        console.log("Signup Failed");
+        alert(errorMessage);
       }
-    } catch (error) {
-      console.error("Error during signup:", error);
-      alert("Something went wrong, please try again later.");
-    }
+    );
   };
 
   const openURL = (url) => {

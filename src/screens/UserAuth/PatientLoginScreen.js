@@ -48,6 +48,7 @@ const PatientLoginScreen = ({ navigation }) => {
             // Alert.alert("Success", "Login successful!");
             navigation.navigate("DetailsGathering", {
               patientId: data.user._id,
+              caregiverId: null,
             });
           }
         },

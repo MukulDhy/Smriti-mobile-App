@@ -8,53 +8,59 @@ import {
   Linking,
   Image,
   ScrollView,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { makeApiRequest } from "../../utils/api-error-utils";
 import API_BASE_URL from "../../config";
 
 const FamilySignupScreen = ({ navigation }) => {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [phone, setPhone] = useState("");
-  const [relationship, setRelationship] = useState("");
-  const [patientId, setPatientId] = useState("");
+  // Test data (remove in production)
+  const [fullName, setFullName] = useState("Family Member");
+  const [email, setEmail] = useState("family1@gmail.com");
+  const [password, setPassword] = useState("family@1234");
+  const [showPassword, setShowPassword] = useState(true);
+  const [phone, setPhone] = useState("9999849792");
+  const [relationship, setRelationship] = useState("Spouse");
+  const [patientId, setPatientId] = useState("12345");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignup = async () => {
-    try {
-      const familyData = {
-        name: fullName,
-        email: email,
-        password: password,
-        phone: phone,
-        userType: "Family",
-        relationship: relationship,
-        patients: patientId,
-      };
+  const handleSignup = () => {
+    const familyData = {
+      name: fullName,
+      email: email,
+      password: password,
+      phone: phone,
+      userType: "family",
+      relationship: relationship,
+      patientEmail: patientId,
+    };
 
-      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(familyData),
-      });
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(familyData),
+    };
 
-      const data = await response.json();
-
-      if (response.ok) {
+    setIsLoading(true);
+    makeApiRequest(
+      `${API_BASE_URL}/api/auth/register`,
+      options,
+      (data) => {
+        setIsLoading(false);
         console.log("Family Signup Successful:", data);
         alert("Registration successful!");
         navigation.navigate("FamilyLoginScreen");
-      } else {
-        console.log("Signup Failed:", data);
-        alert(data.message || "Registration failed, please try again.");
+      },
+      (errorMessage) => {
+        setIsLoading(false);
+        console.log("Signup Failed");
+        alert(errorMessage);
       }
-    } catch (error) {
-      console.error("Error during signup:", error);
-      alert("Something went wrong, please try again later.");
-    }
+    );
   };
 
   const openURL = (url) => {
@@ -154,8 +160,16 @@ const FamilySignupScreen = ({ navigation }) => {
             />
           </View>
 
-          <TouchableOpacity style={styles.loginButton} onPress={handleSignup}>
-            <Text style={styles.buttonText}>Sign Up</Text>
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={handleSignup}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Sign Up</Text>
+            )}
           </TouchableOpacity>
 
           <Text style={styles.orText}>Or</Text>

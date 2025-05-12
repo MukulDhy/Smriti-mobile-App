@@ -7,8 +7,11 @@ import {
 
 export const getPatientDetails = createAsyncThunk(
   "patient/getDetails",
-  async ({ token, patientId }, { rejectWithValue }) => {
+  async ({ token, patientId, caregiverId }, { rejectWithValue }) => {
     try {
+
+      console.log("Pattititiititiitit = ",patientId)
+      console.log("Carrrrrererererrer = ",caregiverId)
       console.log("Dispatching getPatientDetails with:", { token, patientId });
       const data = await fetchPatientDetails(token, patientId);
       console.log("Patient data in thunk:", data);

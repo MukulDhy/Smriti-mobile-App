@@ -16,7 +16,7 @@ import LoadingIndicator from "../../components/LoadingIndicator";
 import { colors } from "../../constants/colors";
 
 const DetailsGatheringScreen = ({ route, navigation }) => {
-  const { patientId } = route.params;
+  const { patientId, caregiverId } = route.params;
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
   const [logs, setLogs] = useState([]);
@@ -70,7 +70,9 @@ const DetailsGatheringScreen = ({ route, navigation }) => {
       // Fetch patient details (critical)
       addLog("Fetching patient information...", "info");
       try {
-        await dispatch(getPatientDetails({ token, patientId })).unwrap();
+        await dispatch(
+          getPatientDetails({ token, patientId, caregiverId })
+        ).unwrap();
         loadStatus.patient = true;
         addLog("Patient data loaded successfully", "success");
       } catch (error) {
@@ -81,7 +83,9 @@ const DetailsGatheringScreen = ({ route, navigation }) => {
       // Fetch caregiver details (non-critical)
       addLog("Fetching caregiver information...", "info");
       try {
-        await dispatch(getCaregiverDetails({ token, patientId })).unwrap();
+        await dispatch(
+          getCaregiverDetails({ token, patientId, caregiverId })
+        ).unwrap();
         loadStatus.caregiver = true;
         addLog("Caregiver data loaded successfully", "success");
       } catch (error) {
@@ -92,7 +96,9 @@ const DetailsGatheringScreen = ({ route, navigation }) => {
       // Fetch family members (semi-critical)
       addLog("Fetching family members...", "info");
       try {
-        await dispatch(getFamilyMembers({ token, patientId })).unwrap();
+        await dispatch(
+          getFamilyMembers({ token, patientId, caregiverId })
+        ).unwrap();
         loadStatus.familyMembers = true;
         addLog("Family members loaded successfully", "success");
       } catch (error) {
@@ -111,14 +117,14 @@ const DetailsGatheringScreen = ({ route, navigation }) => {
         setOverallStatus("success");
         addLog("All data loaded successfully!", "success");
         // Navigate after showing success for 1 second
-        setTimeout(() => navigateToHome(loadStatus), 1000);
+        setTimeout(() => navigateToHome(loadStatus), 3000);
       }
     } catch (error) {
       setOverallStatus("error");
       addLog(`Data synchronization failed: ${error.message || error}`, "error");
       console.error("Unexpected error in fetchAllDetails:", error);
     }
-  }, [addLog, dispatch, navigateToHome, patientId, token]);
+  }, [addLog, dispatch, navigateToHome, patientId, token, caregiverId]);
 
   useEffect(() => {
     fetchAllDetails();
@@ -201,15 +207,13 @@ const DetailsGatheringScreen = ({ route, navigation }) => {
               <Text style={styles.tryAgainButtonText}>Try Again</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[
-                styles.continueButton,
-                errors.patient && styles.disabledButton,
-              ]}
+              style={[styles.continueButton, errors.patient]}
               onPress={handleContinue}
-              disabled={!!errors.patient}
+              // disabled={!!errors.patient ||}
             >
               <Text style={styles.continueButtonText}>
-                {errors.patient ? "Cannot Continue" : "Continue Anyway"}
+                {/* {errors.patient ? "Cannot Continue" : "Continue Anyway"} */}
+                Continue Anyway
               </Text>
             </TouchableOpacity>
           </View>

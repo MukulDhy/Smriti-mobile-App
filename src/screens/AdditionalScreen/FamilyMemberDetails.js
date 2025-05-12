@@ -16,6 +16,7 @@ const FamilyMembersScreen = () => {
   const { data: patientData } = useSelector((state) => state.patient);
   const { list: familyMembers } = useSelector((state) => state.familyMember);
   const isPatient = user.userType.toLowerCase() === "patient";
+  const isCaregiver = user.userType.toLowerCase() === "caregiver";
 
   const renderIcon = (iconName) => {
     // Simple text-based icons
@@ -137,26 +138,47 @@ const FamilyMembersScreen = () => {
 
       {isPatient && renderPatientDetails()}
       {renderFamilyMembers()}
-      <View>
-        <Text style={{ paddingHorizontal: 5, color: "red" }}>
-          You dont have the permission to add the Family memeber
-        </Text>
-      </View>
+
       {isPatient && (
-        <TouchableOpacity
-          style={[styles.addButton, isPatient && styles.disabledButton]}
-          disabled={isPatient}
-        >
-          {renderIcon("add")}
-          <Text
-            style={[
-              styles.addButtonText,
-              isPatient && styles.disabledButtonText,
-            ]}
+        <>
+          <View>
+            <Text style={{ paddingHorizontal: 5, color: "red" }}>
+              You dont have the permission to add the Family memeber
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={[styles.addButton, isPatient && styles.disabledButton]}
+            disabled={isPatient}
           >
-            Add Family Member
-          </Text>
-        </TouchableOpacity>
+            {renderIcon("add")}
+            <Text
+              style={[
+                styles.addButtonText,
+                isPatient && styles.disabledButtonText,
+              ]}
+            >
+              Add Family Member
+            </Text>
+          </TouchableOpacity>
+        </>
+      )}
+      {isCaregiver && (
+        <>
+          <TouchableOpacity
+            style={[styles.addButton, isPatient && styles.disabledButton]}
+            disabled={isPatient}
+          >
+            {renderIcon("add")}
+            <Text
+              style={[
+                styles.addButtonText,
+                isPatient && styles.disabledButtonText,
+              ]}
+            >
+              Add Family Member
+            </Text>
+          </TouchableOpacity>
+        </>
       )}
     </ScrollView>
   );
