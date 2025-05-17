@@ -12,7 +12,7 @@ import App from "./App";
 import { ReminderProvider } from "./contexts/ReminderContext";
 import { WebSocketProvider } from "./contexts/WebSocketContext";
 import { AuthProvider } from "./contexts/AuthContext";
-
+import AlertListener from "./AlertListener";
 const AppWrapper = () => {
   const { theme } = useTheme();
 

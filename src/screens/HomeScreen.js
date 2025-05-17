@@ -12,6 +12,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { calculateAge } from "../utils/dateUtils";
 import { logoutUser } from "../features/auth/authSlice";
+import colors from "../constants/colors";
 
 const { width, height } = Dimensions.get("window");
 
@@ -88,10 +89,12 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.boxTitleBlack}>Friends & Family</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.boxInfo, styles.box1]}
+            style={[styles.boxInfo, styles.box5]}
             onPress={() => navigation.navigate("CarePatientDetails")}
           >
-            <Text style={styles.boxTitleWhite}>Caregiver</Text>
+            <Text style={styles.boxTitleWhite}>
+              {user?.userType === "patient" ? "Caregiver" : "Patient"}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -126,7 +129,10 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.boxTitleBlack}>Sensor Data</Text>
             <Text style={styles.boxDescBlack}>Monitor health metrics.</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.box, styles.box4]}>
+          <TouchableOpacity
+            style={[styles.box, styles.box4]}
+            onPress={() => navigation.navigate("GameNavigation")}
+          >
             <Text style={styles.boxTitleBlack}>Mindfulness & Relaxation</Text>
             <Text style={styles.boxDescBlack}>
               Meditation and stress relief.
@@ -136,14 +142,14 @@ const HomeScreen = ({ navigation }) => {
         {/* Row 3 */}
         <View style={styles.row}>
           <TouchableOpacity
-            style={[styles.box, styles.box1]}
+            style={[styles.box, styles.box5]}
             onPress={() => navigation.navigate("ReminderPage")}
           >
-            <Text style={styles.boxTitleBlack}>Remidner page</Text>
-            <Text style={styles.boxDescBlack}>Monitor health metrics.</Text>
+            <Text style={styles.boxTitleWhite}>Remidner page</Text>
+            <Text style={styles.boxDescWhite}>Monitor health metrics.</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.box, styles.box4]}
+            style={[styles.box, styles.box2]}
             onPress={() => navigation.navigate("ReminderScreen")}
           >
             <Text style={styles.boxTitleBlack}>Reminder screen</Text>
@@ -181,6 +187,7 @@ const styles = StyleSheet.create({
     top: 60,
     right: 20,
   },
+
   profileText: {
     fontSize: 22,
     fontWeight: "bold",
@@ -274,6 +281,10 @@ const styles = StyleSheet.create({
   },
   box4: {
     backgroundColor: "#EEDC82",
+  },
+  box5: {
+    backgroundColor: "#301934",
+    color: "#FFFFFF",
   },
   boxTitleWhite: {
     fontSize: 16,

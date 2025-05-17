@@ -27,7 +27,7 @@ import PatientLoginScreen from "../screens/UserAuth/PatientLoginScreen";
 import PatientSignupScreen from "../screens/UserAuth/PatientSignupScreen";
 import FamilySignupScreen from "../screens/UserAuth/FamilySignupScreen";
 import FamilyLoginScreen from "../screens/UserAuth/FamilyLoginScreen";
-
+import EmergencyScreen from "../screens/EmergencyScreen";
 // Additional screens
 
 import SensorScreen from "../screens/SensorScreen";
@@ -43,6 +43,11 @@ import CarePatientDetails from "../screens/AdditionalScreen/CarePatientDetails";
 import RemindersScreen from "../screens/Reminder/RemindersScreen";
 import AddReminderScreen from "../screens/Reminder/AddReminderScreen";
 import ReminderPage from "../screens/Reminder/ReminderPage";
+import AlertListener from "../AlertListener";
+import CalmTaps from "../screens/Games/CalmTaps";
+import BreathingExerciseGame from "../screens/Games/BreathingExerciseGame";
+import GameNavigation from "../screens/Games/GameNavigationScreen";
+import MazeGame from "../screens/Games/MatchingFacesGame";
 
 const Tab = createBottomTabNavigator();
 const MainStack = createStackNavigator();
@@ -88,6 +93,7 @@ const ScollableFamilyMemberDetail = createScrollableScreen(
   FamilyMembersDetailsScreen
 );
 const ScrollableCarePatientDetail = createScrollableScreen(CarePatientDetails);
+const ScrollableGameNavigation = createScrollableScreen(GameNavigation);
 const HomeStackNavigator = () => {
   const { t } = useTranslation();
   return (
@@ -96,6 +102,11 @@ const HomeStackNavigator = () => {
         name="HomeScreen" // Changed from "Home" to "HomeScreen"
         component={ScrollableHomeScreen}
         options={{ headerShown: true, title: t("home") }}
+      />
+      <HomeStack.Screen
+        name="EmergencyScreen"
+        component={EmergencyScreen}
+        options={{ headerShown: false }} // Full-screen alert
       />
 
       <HomeStack.Screen
@@ -133,6 +144,10 @@ const HomeStackNavigator = () => {
       <HomeStack.Screen
         name="VoiceRecordingScreen"
         component={ScrollableVoiceRecordingScreen}
+      />
+      <HomeStack.Screen
+        name="GameNavigation"
+        component={ScrollableGameNavigation}
       />
     </HomeStack.Navigator>
   );
@@ -195,54 +210,68 @@ const AppNavigator = () => {
 
   return (
     <NavigationContainer>
-      <MainStack.Navigator>
-        {/* Auth Screens */}
-        <MainStack.Screen
-          name="Welcome"
-          component={WelcomeScreen}
-          options={{ headerShown: false }}
-        />
+      <AlertListener>
+        <MainStack.Navigator>
+          {/* Auth Screens */}
+          <MainStack.Screen
+            name="Welcome"
+            component={WelcomeScreen}
+            options={{ headerShown: false }}
+          />
 
-        <MainStack.Screen name="UserTypeScreen" component={UserTypeScreen} />
-        <MainStack.Screen
-          name="CaregiverLoginScreen"
-          component={CaregiverLoginScreen}
-        />
-        <MainStack.Screen
-          name="CaregiverSignupScreen"
-          component={CaregiverSignupScreen}
-        />
-        <MainStack.Screen
-          name="PatientSignupScreen"
-          component={PatientSignupScreen}
-        />
-        <MainStack.Screen
-          name="PatientLoginScreen"
-          component={PatientLoginScreen}
-        />
-        <MainStack.Screen
-          name="FamilySignupScreen"
-          component={FamilySignupScreen}
-        />
-        <MainStack.Screen
-          name="FamilyLoginScreen"
-          component={FamilyLoginScreen}
-        />
-        <MainStack.Screen
-          name="DetailsGathering"
-          component={DetailsGatheringScreen}
-        />
+          <MainStack.Screen name="UserTypeScreen" component={UserTypeScreen} />
+          <MainStack.Screen
+            name="CaregiverLoginScreen"
+            component={CaregiverLoginScreen}
+          />
+          <MainStack.Screen
+            name="CaregiverSignupScreen"
+            component={CaregiverSignupScreen}
+          />
+          <MainStack.Screen
+            name="PatientSignupScreen"
+            component={PatientSignupScreen}
+          />
+          <MainStack.Screen
+            name="PatientLoginScreen"
+            component={PatientLoginScreen}
+          />
+          <MainStack.Screen
+            name="FamilySignupScreen"
+            component={FamilySignupScreen}
+          />
+          <MainStack.Screen
+            name="FamilyLoginScreen"
+            component={FamilyLoginScreen}
+          />
+          <MainStack.Screen
+            name="DetailsGathering"
+            component={DetailsGatheringScreen}
+          />
+          <MainStack.Screen
+            name="CalmTaps"
+            component={CalmTaps}
+          />
+          <MainStack.Screen
+            name="BreathingExerciseGame"
+            component={BreathingExerciseGame}
+          />
+          <MainStack.Screen
+            name="MazeGame"
+            component={MazeGame}
+          />
 
-        {/* Main App */}
-        <MainStack.Screen
-          name="MainApp"
-          component={AppTabNavigator}
-          options={{
-            headerShown: false,
-            gestureEnabled: false, // Prevents going back to auth
-          }}
-        />
-      </MainStack.Navigator>
+          {/* Main App */}
+          <MainStack.Screen
+            name="MainApp"
+            component={AppTabNavigator}
+            options={{
+              headerShown: false,
+              gestureEnabled: false, // Prevents going back to auth
+            }}
+          />
+        </MainStack.Navigator>
+      </AlertListener>
     </NavigationContainer>
   );
 };

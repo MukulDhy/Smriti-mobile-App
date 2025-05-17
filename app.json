@@ -13,18 +13,21 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+       "permissions": ["VIBRATE", "USE_FULL_SCREEN_INTENT"]
     },
     "web": {
       "favicon": "./assets/icon.png"
     },
     "plugins": [
+       ["expo-notifications", { "sound": true }]
      
     ]
   }

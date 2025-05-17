@@ -9,7 +9,9 @@ import {
   Modal,
   TouchableOpacity,
 } from "react-native";
-
+import API_BASE_URL from "../../config";
+import { makeApiRequest } from "../../utils/api-error-utils";
+import { useSelector } from "react-redux";
 const ReminderForm = ({ onSubmit, initialValues }) => {
   const [title, setTitle] = useState(initialValues?.title || "");
   const [description, setDescription] = useState(
@@ -55,41 +57,49 @@ const ReminderForm = ({ onSubmit, initialValues }) => {
     setDate(tempDate);
     setShowModal(false);
   };
+  const token = useSelector((state) => state.auth?.token); // ✅ Getting token from Redux
+  const patientId = useSelector((state) => state.auth.user?.patient);
 
   const handleSubmit = async () => {
+    console.log(token);
     if (!title || !date) {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
+    console.log("adhwakjhdk");
 
     const reminderData = {
       title,
       description,
       scheduledTime: date.toISOString(),
+      patientId: patientId,
     };
 
-    setIsSubmitting(true);
-
+    // setIsSubmitting(true);
+    console.log(reminderData);
     try {
-      const response = await fetch("https://your-api-endpoint.com/reminders", {
-        method: initialValues?._id ? "PUT" : "POST",
+      const options = {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ✅ Backend expects this format
         },
-        body: JSON.stringify(
-          initialValues?._id
-            ? { ...reminderData, id: initialValues._id }
-            : reminderData
-        ),
-      });
+        body: JSON.stringify(reminderData),
+      };
 
-      if (!response.ok) {
-        throw new Error("Failed to save reminder");
-      }
-
-      const result = await response.json();
-      Alert.alert("Success", "Reminder saved successfully!");
-      onSubmit(result);
+      makeApiRequest(
+        `${API_BASE_URL}/api/reminders/add`,
+        options,
+        (data) => {
+          onSubmit(data);
+          console.log("Successfully Reminder Set:", data);
+          Alert.alert("Success", "Reminder set successfully!");
+        },
+        (errorMessage) => {
+          console.log("Error occurred in the Reminder posting");
+          Alert.alert("Error", errorMessage);
+        }
+      );
     } catch (error) {
       Alert.alert("Error", error.message || "An error occurred");
     } finally {
