@@ -8,6 +8,8 @@ const ReminderPage = () => {
   const { reminders } = useReminders();
   const { isConnected } = useWebSocket();
 
+  console.log(reminders);
+
   const upcomingReminders = reminders
     .filter((r) => new Date(r.scheduledTime) > new Date())
     .sort((a, b) => new Date(a.scheduledTime) - new Date(b.scheduledTime))

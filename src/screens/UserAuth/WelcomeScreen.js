@@ -33,6 +33,12 @@ const WelcomeScreen = ({ navigation }) => {
           patientId: auth.user?._id || auth.user?.patient || null,
         });
         return;
+      } else if (auth.user?.userType === "family") {
+        navigation.navigate("DetailsGathering", {
+          patientId: auth.user?.
+          patient || null,
+        });
+        return;
       }
     }
   };

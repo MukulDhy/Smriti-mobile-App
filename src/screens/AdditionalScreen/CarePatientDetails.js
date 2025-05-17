@@ -19,6 +19,8 @@ import {
   addConnection,
 } from "../../store/actions/connectionActions";
 import API_BASE_URL from "../../config";
+import { makeApiRequest } from "../../utils/api-error-utils";
+import { useTheme } from "react-native-paper";
 
 const CaregiverDetailsScreen = () => {
   const dispatch = useDispatch();
@@ -28,8 +30,14 @@ const CaregiverDetailsScreen = () => {
   const { searchResults, loading: searchLoading } = useSelector(
     (state) => state.connections
   );
+  const themeContext = useTheme();
+  const { theme, toggleTheme, isDarkMode } = themeContext || {
+    theme: {},
+    toggleTheme: () => {},
+    isDarkMode: false,
+  };
   const isPatient = user.userType.toLowerCase() === "patient";
-
+  const isFamily = user.userType.toLowerCase() === "family";
   // State for modals and interactions
   const [inviteModalVisible, setInviteModalVisible] = useState(false);
   const [searchModalVisible, setSearchModalVisible] = useState(false);
@@ -64,6 +72,14 @@ const CaregiverDetailsScreen = () => {
       search: "🔍",
       link: "🔗",
       whatsapp: "📱",
+      location: "📍",
+      id: "🆔",
+      organization: "🏢",
+      specialization: "🎓",
+      experience: "📊",
+      language: "🗣️",
+      availability: "⏰",
+      certification: "📜",
     };
     return <Text style={styles.icon}>{icons[iconName] || ""}</Text>;
   };
@@ -132,7 +148,7 @@ const CaregiverDetailsScreen = () => {
 
     setIsSending(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/whatsapp/send`, {
+      const options = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -141,17 +157,26 @@ const CaregiverDetailsScreen = () => {
           to: `whatsapp:+91${phoneNumber}`,
           message: message,
         }),
-      });
+      };
 
-      const result = await response.json();
-
-      if (response.ok) {
-        Alert.alert("Success", "Invitation sent successfully!");
-        setInviteModalVisible(false);
-        setPhoneNumber("");
-      } else {
-        throw new Error(result.message || "Failed to send invitation");
-      }
+      makeApiRequest(
+        `${API_BASE_URL}/api/whatsapp/send`,
+        options,
+        async (data) => {
+          // console.log("data = ", data);
+          Alert.alert("Success", "Invitation sent successfully!");
+          setInviteModalVisible(false);
+          setPhoneNumber("");
+          setPhoneNumber("");
+        },
+        (error) => {
+          Alert.alert(
+            "Error",
+            error.message || "Failed to send WhatsApp message"
+          );
+          console.log(error);
+        }
+      );
     } catch (error) {
       Alert.alert("Error", error.message || "Failed to send WhatsApp message");
       console.log(error);
@@ -160,14 +185,27 @@ const CaregiverDetailsScreen = () => {
     }
   };
 
+  const getThemeColor = (colorName, fallback = "#000000") => {
+    if (theme && theme.colors && theme.colors[colorName]) {
+      return theme.colors[colorName];
+    }
+    return fallback;
+  };
   const renderDetailsSection = (title, data) => (
     <View style={styles.sectionContainer}>
       <Text style={styles.sectionTitle}>{title}</Text>
       <View style={styles.detailCard}>
-        <Image
-          source={{ uri: data?.avatar || "https://via.placeholder.com/150" }}
-          style={styles.avatar}
-        />
+        <View
+          style={[
+            styles.avatar,
+            { backgroundColor: getThemeColor("primary", "#6200ee") },
+          ]}
+        >
+          <Text style={styles.avatarText}>
+            {data?.name ? data.name.substring(0, 2).toUpperCase() : "??"}
+          </Text>
+        </View>
+
         <View style={styles.detailTextContainer}>
           <Text style={styles.name}>{data?.name || "Name not available"}</Text>
 
@@ -187,6 +225,13 @@ const CaregiverDetailsScreen = () => {
               <Text style={styles.detailText}>
                 {new Date(data.dateOfBirth).toLocaleDateString()}
               </Text>
+            </View>
+          )}
+
+          {data?.address && (
+            <View style={styles.detailRow}>
+              {renderIcon("location")}
+              <Text style={styles.detailText}>{data.address}</Text>
             </View>
           )}
 
@@ -219,6 +264,91 @@ const CaregiverDetailsScreen = () => {
               {renderIcon("medical")}
               <Text style={styles.detailText}>{data.primaryDiagnosis}</Text>
             </View>
+          )}
+
+          {data?.userType === "caregiver" && (
+            <>
+              <Text style={styles.subsectionTitle}>Professional Details</Text>
+
+              {data?.deviceId && (
+                <View style={styles.detailRow}>
+                  {renderIcon("id")}
+                  <Text style={styles.detailText}>
+                    Device ID: {data.deviceId}
+                  </Text>
+                </View>
+              )}
+
+              {data?.organization && (
+                <View style={styles.detailRow}>
+                  {renderIcon("organization")}
+                  <Text style={styles.detailText}>{data.organization}</Text>
+                </View>
+              )}
+
+              {data?.specialization && (
+                <View style={styles.detailRow}>
+                  {renderIcon("specialization")}
+                  <Text style={styles.detailText}>{data.specialization}</Text>
+                </View>
+              )}
+
+              {data?.yearsOfExperience && (
+                <View style={styles.detailRow}>
+                  {renderIcon("experience")}
+                  <Text style={styles.detailText}>
+                    {data.yearsOfExperience} years of experience
+                  </Text>
+                </View>
+              )}
+
+              {data?.languages && (
+                <View style={styles.detailRow}>
+                  {renderIcon("language")}
+                  <Text style={styles.detailText}>
+                    Languages: {data.languages.join(", ")}
+                  </Text>
+                </View>
+              )}
+
+              {data?.availability && (
+                <View style={styles.detailRow}>
+                  {renderIcon("availability")}
+                  <Text style={styles.detailText}>
+                    Availability: {data.availability}
+                  </Text>
+                </View>
+              )}
+
+              {data?.certifications && data.certifications.length > 0 && (
+                <>
+                  <Text style={styles.subsectionTitle}>Certifications</Text>
+                  {data.certifications.map((cert, index) => (
+                    <View key={index} style={styles.detailRow}>
+                      {renderIcon("certification")}
+                      <Text style={styles.detailText}>{cert}</Text>
+                    </View>
+                  ))}
+                </>
+              )}
+              {data?.isAlsoFamilyMember === true && (
+                <View style={styles.detailRow}>
+                  {renderIcon("user")}
+                  <Text style={styles.detailText}>
+                    Relationship: {data.relationship}
+                  </Text>
+                </View>
+              )}
+              {data?.createdAt && (
+                <View style={styles.detailRow}>
+                  {renderIcon("calendar")}
+                  <Text style={styles.detailText}>
+                    Member since:{" "}
+                    {new Date(data.createdAt).toLocaleDateString()}
+                  </Text>
+                </View>
+              )}
+            </>
           )}
         </View>
       </View>
@@ -295,6 +425,9 @@ const CaregiverDetailsScreen = () => {
             : renderNoConnection()
           : patientData
           ? renderDetailsSection("Your Patient Details", patientData)
+          : renderNoConnection()}
+        {isFamily
+          ? renderDetailsSection("Caregiver Details", caregiverData)
           : renderNoConnection()}
       </ScrollView>
 
@@ -471,15 +604,34 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  profileSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 20,
+    paddingVertical: 24,
+  },
   avatar: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    marginRight: 15,
-    borderWidth: 2,
-    borderColor: colors.primaryLight,
-    backgroundColor: colors.lightGray,
+    marginRight: 25,
+    justifyContent: "center",
+    alignItems: "center",
   },
+  avatarText: {
+    fontSize: 24,
+    color: "white",
+    fontWeight: "bold",
+  },
+  // avatar: {
+  //   width: 80,
+  //   height: 80,
+  //   borderRadius: 40,
+  //   marginRight: 15,
+  //   borderWidth: 2,
+  //   borderColor: colors.primaryLight,
+  //   backgroundColor: colors.lightGray,
+  // },
   detailTextContainer: {
     flex: 1,
   },

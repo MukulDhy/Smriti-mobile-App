@@ -1,7 +1,14 @@
+// ReminderItem.js
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useReminders } from "../../contexts/ReminderContext";
 import { format } from "date-fns";
+
+const STATUS_COLORS = {
+  scheduled: "#4CAF50",
+  triggered: "#2196F3",
+  cancelled: "#F44336",
+};
 
 const ReminderItem = ({ reminder }) => {
   const { cancelReminder } = useReminders();
@@ -15,7 +22,12 @@ const ReminderItem = ({ reminder }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { borderLeftWidth: 4, borderLeftColor: STATUS_COLORS[reminder.status] },
+      ]}
+    >
       <View style={styles.content}>
         <Text style={styles.title}>{reminder.title}</Text>
         <Text style={styles.time}>
@@ -24,7 +36,13 @@ const ReminderItem = ({ reminder }) => {
         {reminder.description && (
           <Text style={styles.description}>{reminder.description}</Text>
         )}
-        <Text style={styles.status}>Status: {reminder.status}</Text>
+        <View style={styles.statusContainer}>
+          <Text
+            style={[styles.status, { color: STATUS_COLORS[reminder.status] }]}
+          >
+            {reminder.status.charAt(0).toUpperCase() + reminder.status.slice(1)}
+          </Text>
+        </View>
       </View>
 
       {reminder.status === "scheduled" && (
@@ -46,9 +64,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     elevation: 2,
   },
   content: {
@@ -56,30 +74,39 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 4,
+    fontWeight: "600",
+    marginBottom: 6,
+    color: "#333",
   },
   time: {
     fontSize: 14,
     color: "#666",
-    marginBottom: 4,
+    marginBottom: 6,
   },
   description: {
     fontSize: 14,
-    marginBottom: 4,
+    color: "#666",
+    marginBottom: 6,
+    lineHeight: 20,
+  },
+  statusContainer: {
+    marginTop: 4,
   },
   status: {
-    fontSize: 12,
-    color: "#888",
+    fontSize: 13,
+    fontWeight: "500",
   },
   cancelButton: {
     backgroundColor: "#ff4444",
-    padding: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderRadius: 4,
+    marginLeft: 10,
   },
   cancelButtonText: {
     color: "white",
-    fontWeight: "bold",
+    fontWeight: "500",
+    fontSize: 14,
   },
 });
 

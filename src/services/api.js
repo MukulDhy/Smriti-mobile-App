@@ -14,6 +14,7 @@ api.interceptors.request.use(
     // const { userToken } = useAuth.getState();
     const userToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MjFiNDdiNmNhNjU4Y2QwMTY3MTU0OSIsImlhdCI6MTc0NzA3NjQ0OCwiZXhwIjoxNzQ5NjY4NDQ4fQ.k8RV5eMXLpbu97Cq2KhP7cAzvLS5BO1j9ozZmb9TCoo";
+      
     if (userToken) {
       config.headers.Authorization = `Bearer ${userToken}`;
     }

@@ -146,7 +146,7 @@ const HomeScreen = ({ navigation }) => {
             onPress={() => navigation.navigate("ReminderPage")}
           >
             <Text style={styles.boxTitleWhite}>Remidner page</Text>
-            <Text style={styles.boxDescWhite}>Monitor health metrics.</Text>
+            <Text style={styles.boxDescWhite}>See all Scheduled Reminder.</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.box, styles.box2]}
