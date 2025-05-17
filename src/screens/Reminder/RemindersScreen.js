@@ -1,15 +1,15 @@
 // RemindersScreen.js
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
   Text,
+  RefreshControl,
 } from "react-native";
 import ReminderList from "../../components/Reminder/ReminderList";
-import { useWebSocket } from "../../contexts/WebSocketContext";
-import ConnectionStatus from "../../components/Reminder/ConnectionStatus";
+import { useReminders } from "../../contexts/ReminderContext";
 
 const FILTERS = {
   ALL: "All",
@@ -19,44 +19,70 @@ const FILTERS = {
 };
 
 const RemindersScreen = ({ navigation }) => {
-  const { isConnected } = useWebSocket();
+  const { fetchReminders, isLoading } = useReminders();
   const [activeFilter, setActiveFilter] = useState(FILTERS.ALL);
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Load reminders when screen focuses
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      handleRefresh();
+    });
+
+    // Initial load
+    handleRefresh();
+
+    return unsubscribe;
+  }, [navigation]);
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await fetchReminders();
+    } catch (error) {
+      console.error("Failed to refresh reminders:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [fetchReminders]);
 
   return (
     <View style={styles.container}>
-      {/* <ConnectionStatus isConnected={isConnected} /> */}
-
-      {/* Filter Header */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.filterContainer}
-      >
-        {Object.values(FILTERS).map((filter) => (
-          <TouchableOpacity
-            key={filter}
-            style={[
-              styles.filterButton,
-              activeFilter === filter && styles.activeFilterButton,
-            ]}
-            onPress={() => setActiveFilter(filter)}
-          >
-            <Text
+      {/* Filter Header - Separate ScrollView for horizontal scrolling */}
+      <View style={styles.filterHeader}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterContainer}
+        >
+          {Object.values(FILTERS).map((filter) => (
+            <TouchableOpacity
+              key={filter}
               style={[
-                styles.filterText,
-                activeFilter === filter && styles.activeFilterText,
+                styles.filterButton,
+                activeFilter === filter && styles.activeFilterButton,
               ]}
+              onPress={() => setActiveFilter(filter)}
             >
-              {filter}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+              <Text
+                style={[
+                  styles.filterText,
+                  activeFilter === filter && styles.activeFilterText,
+                ]}
+              >
+                {filter}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
 
       {/* Main Content - ReminderList */}
-      <View style={styles.listContainer}>
-        <ReminderList filter={activeFilter} />
-      </View>
+      <ReminderList
+        filter={activeFilter}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+      />
     </View>
   );
 };
@@ -64,14 +90,16 @@ const RemindersScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#ffffff",
+  },
+  filterHeader: {
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0",
   },
   filterContainer: {
     paddingVertical: 12,
     paddingHorizontal: 16,
-    backgroundColor: "white",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
   },
   filterButton: {
     paddingHorizontal: 16,
@@ -89,9 +117,6 @@ const styles = StyleSheet.create({
   },
   activeFilterText: {
     color: "white",
-  },
-  listContainer: {
-    flex: 1,
   },
 });
 

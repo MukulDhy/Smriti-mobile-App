@@ -21,14 +21,27 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
-       "permissions": ["VIBRATE", "USE_FULL_SCREEN_INTENT"]
+      "permissions": [
+        "VIBRATE",
+        "USE_FULL_SCREEN_INTENT"
+      ],
+      "package": "com.mukul2003.mindapp"
     },
     "web": {
       "favicon": "./assets/icon.png"
     },
     "plugins": [
-       ["expo-notifications", { "sound": true }]
-     
-    ]
+      [
+        "expo-notifications",
+        {
+          "sound": true
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "bd517a7a-3cc2-405e-8c55-d6107856f900"
+      }
+    }
   }
 }

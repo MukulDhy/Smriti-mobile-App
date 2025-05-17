@@ -1,16 +1,17 @@
 // ReminderList.js
 import React from "react";
 import {
-  FlatList,
   View,
   Text,
   StyleSheet,
   ActivityIndicator,
+  FlatList,
+  RefreshControl,
 } from "react-native";
 import ReminderItem from "./ReminderItem";
 import { useReminders } from "../../contexts/ReminderContext";
 
-const ReminderList = ({ filter }) => {
+const ReminderList = ({ filter, refreshing, onRefresh }) => {
   const { reminders, isLoading, error } = useReminders();
 
   // Filter reminders based on active filter
@@ -35,7 +36,7 @@ const ReminderList = ({ filter }) => {
     return filtered;
   }, [reminders, filter]);
 
-  if (isLoading) {
+  if (isLoading && !refreshing) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color="#6200ee" />
@@ -57,6 +58,10 @@ const ReminderList = ({ filter }) => {
       keyExtractor={(item) => item._id}
       renderItem={({ item }) => <ReminderItem reminder={item} />}
       contentContainerStyle={styles.list}
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
       ListEmptyComponent={
         <View style={styles.center}>
           <Text style={styles.emptyText}>
@@ -69,8 +74,12 @@ const ReminderList = ({ filter }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   list: {
     padding: 16,
+    flexGrow: 1,
   },
   center: {
     flex: 1,

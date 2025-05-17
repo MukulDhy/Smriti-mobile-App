@@ -12,7 +12,8 @@ export const ReminderProvider = ({ children }) => {
 
   // Get token from Redux auth state
   const token = useSelector((state) => state.auth.token);
-
+  const patientId = useSelector((state) => state.patient.data._id);
+  console.log("{{{{{{{{ {PPPPPPPPPPPPPPPPPP = ", patientId);
   // Create Axios instance with auth token
   const axiosInstance = axios.create({
     baseURL: `${API_BASE_URL}/api`,
@@ -20,6 +21,7 @@ export const ReminderProvider = ({ children }) => {
     headers: {
       Authorization: token ? `Bearer ${token}` : undefined,
     },
+    body: { patientId: patientId },
   });
 
   const fetchReminders = async () => {
@@ -27,7 +29,9 @@ export const ReminderProvider = ({ children }) => {
     setError(null);
 
     try {
-      const response = await axiosInstance.get("/reminders");
+      const response = await axiosInstance.get(
+        `/reminders?patientId=${patientId}`
+      );
 
       setReminders(
         Array.isArray(response?.data?.data) ? response?.data?.data : []

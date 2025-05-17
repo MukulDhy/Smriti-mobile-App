@@ -17,14 +17,22 @@ import API_BASE_URL from "../../config";
 
 const FamilySignupScreen = ({ navigation }) => {
   // Test data (remove in production)
-  const [fullName, setFullName] = useState("Family Member");
-  const [email, setEmail] = useState("family1@gmail.com");
-  const [password, setPassword] = useState("family@1234");
-  const [showPassword, setShowPassword] = useState(true);
-  const [phone, setPhone] = useState("9999849792");
-  const [relationship, setRelationship] = useState("Spouse");
-  const [patientId, setPatientId] = useState("12345");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [relationship, setRelationship] = useState("");
+  const [patientId, setPatientId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  // const [fullName, setFullName] = useState("Family Member");
+  // const [email, setEmail] = useState("family1@gmail.com");
+  // const [password, setPassword] = useState("family@1234");
+  // const [showPassword, setShowPassword] = useState(true);
+  // const [phone, setPhone] = useState("9999849792");
+  // const [relationship, setRelationship] = useState("Spouse");
+  // const [patientId, setPatientId] = useState("12345");
+  // const [isLoading, setIsLoading] = useState(false);
 
   const handleSignup = () => {
     const familyData = {

@@ -15,15 +15,24 @@ import API_BASE_URL from "../../config";
 
 const CaregiverSignupScreen = ({ navigation }) => {
   // Pre-filled test data (remove in production)
-  const [fullName, setFullName] = useState("Caregiver Test");
-  const [email, setEmail] = useState("caregiver1@gmail.com");
-  const [password, setPassword] = useState("caregiver@1234");
-  const [showPassword, setShowPassword] = useState(true);
-  const [phone, setPhone] = useState("9999849791");
-  const [patientId, setPatientId] = useState("12345");
-  const [deviceId, setDeviceId] = useState("device123");
-  const [relationship, setRelationship] = useState("Family Friend");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [patientId, setPatientId] = useState("");
+  const [deviceId, setDeviceId] = useState("");
+  const [relationship, setRelationship] = useState("");
   const [isAlsoFamilyMember, setIsAlsoFamilyMember] = useState(true);
+  // const [fullName, setFullName] = useState("Caregiver Test");
+  // const [email, setEmail] = useState("caregiver1@gmail.com");
+  // const [password, setPassword] = useState("caregiver@1234");
+  // const [showPassword, setShowPassword] = useState(true);
+  // const [phone, setPhone] = useState("9999849791");
+  // const [patientId, setPatientId] = useState("12345");
+  // const [deviceId, setDeviceId] = useState("device123");
+  // const [relationship, setRelationship] = useState("Family Friend");
+  // const [isAlsoFamilyMember, setIsAlsoFamilyMember] = useState(true);
 
   const handleSignup = () => {
     const caregiverData = {
