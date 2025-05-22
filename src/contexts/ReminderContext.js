@@ -11,8 +11,8 @@ export const ReminderProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   // Get token from Redux auth state
-  const token = useSelector((state) => state.auth.token);
-  const patientId = useSelector((state) => state.patient.data._id);
+  const token = useSelector((state) => state.auth?.token);
+  const patientId = useSelector((state) => state.patient?.data?._id);
   console.log("{{{{{{{{ {PPPPPPPPPPPPPPPPPP = ", patientId);
   // Create Axios instance with auth token
   const axiosInstance = axios.create({

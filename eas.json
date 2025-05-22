@@ -2,13 +2,35 @@
   "build": {
     "preview": {
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "env": {
+          "npm_config_legacy_peer_deps": "true"
+        },
+        "cache": {
+          "disabled": true
+        },
+        "gradleCommand": "./gradlew app:assembleRelease"
       }
     },
     "production": {
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle",
+        "env": {
+          "npm_config_legacy_peer_deps": "true"
+        }
+      }
+    },
+    "development": {
+      "android": {
+        "buildType": "apk",
+        "env": {
+          "npm_config_legacy_peer_deps": "true"
+        }
       }
     }
+  },
+  "cli": {
+    "version": ">= 3.0.0",
+    "appVersionSource": "remote"
   }
 }

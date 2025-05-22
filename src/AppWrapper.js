@@ -13,6 +13,7 @@ import { ReminderProvider } from "./contexts/ReminderContext";
 import { WebSocketProvider } from "./contexts/WebSocketContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import AlertListener from "./AlertListener";
+import { LocationProvider } from "./contexts/LocationContext";
 const AppWrapper = () => {
   const { theme } = useTheme();
 
@@ -38,14 +39,16 @@ const AppWrapper = () => {
       >
         <AuthProvider>
           <ReminderProvider>
-            <WebSocketProvider>
-              <I18nextProvider i18n={i18n}>
-                <PaperProvider theme={theme}>
-                  <StatusBar style={theme.dark ? "light" : "dark"} />
-                  <App />
-                </PaperProvider>
-              </I18nextProvider>
-            </WebSocketProvider>
+            <LocationProvider>
+              <WebSocketProvider>
+                <I18nextProvider i18n={i18n}>
+                  <PaperProvider theme={theme}>
+                    <StatusBar style={theme.dark ? "light" : "dark"} />
+                    <App />
+                  </PaperProvider>
+                </I18nextProvider>
+              </WebSocketProvider>
+            </LocationProvider>
           </ReminderProvider>
         </AuthProvider>
       </PersistGate>

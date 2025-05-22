@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   View,
@@ -21,6 +21,18 @@ const HomeScreen = ({ navigation }) => {
   const dispatch = useDispatch();
 
   const { user, token } = useSelector((state) => state.auth);
+  const auth = useSelector((state) => state.auth);
+  useEffect(() => {
+    if (
+      auth.user === null ||
+      (auth.user == null && auth.token === null) ||
+      auth.token == null
+    ) {
+      navigation.navigate("UserTypeScreen");
+      return;
+    }
+  }, []);
+
   return (
     <View style={styles.container}>
       <Ionicons
@@ -143,7 +155,7 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.row}>
           <TouchableOpacity
             style={[styles.box, styles.box5]}
-            onPress={() => navigation.navigate("ReminderPage")}
+            onPress={() => navigation.navigate("VoiceDetectorPage")}
           >
             <Text style={styles.boxTitleWhite}>Remidner page</Text>
             <Text style={styles.boxDescWhite}>See all Scheduled Reminder.</Text>
@@ -156,6 +168,25 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.boxDescBlack}>
               Meditation and stress relief.
             </Text>
+          </TouchableOpacity>
+        </View>
+        {/* Row 4 */}
+        <View style={styles.row}>
+          <TouchableOpacity
+            style={[styles.box, styles.box2]}
+            onPress={() => navigation.navigate("VoiceDetectorScreen")}
+          >
+            <Text style={styles.boxTitleBlack}>Voice Detection</Text>
+            <Text style={styles.boxDescBlack}>
+              Detect the person who is speaking in the envirnoment.
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.box, styles.box6]}
+            onPress={() => navigation.navigate("LocationScreen")}
+          >
+            <Text style={styles.boxTitleWhite}>Location page</Text>
+            <Text style={styles.boxDescWhite}>See the patient location.</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -284,6 +315,10 @@ const styles = StyleSheet.create({
   },
   box5: {
     backgroundColor: "#301934",
+    color: "#FFFFFF",
+  },
+  box6: {
+    backgroundColor: "#00008B",
     color: "#FFFFFF",
   },
   boxTitleWhite: {

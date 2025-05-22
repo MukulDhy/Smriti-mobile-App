@@ -23,7 +23,11 @@
       },
       "permissions": [
         "VIBRATE",
-        "USE_FULL_SCREEN_INTENT"
+        "USE_FULL_SCREEN_INTENT",
+        "ACCESS_BACKGROUND_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "FOREGROUND_SERVICE"
       ],
       "package": "com.mukul2003.mindapp"
     },
@@ -35,6 +39,13 @@
         "expo-notifications",
         {
           "sound": true
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "We need your location to track your position",
+          "isAndroidBackgroundLocationEnabled": true
         }
       ]
     ],

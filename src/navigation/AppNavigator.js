@@ -48,6 +48,7 @@ import CalmTaps from "../screens/Games/CalmTaps";
 import BreathingExerciseGame from "../screens/Games/BreathingExerciseGame";
 import GameNavigation from "../screens/Games/GameNavigationScreen";
 import MazeGame from "../screens/Games/MatchingFacesGame";
+import LocationDisplay from "../screens/AdditionalScreen/LocationDisplay";
 
 const Tab = createBottomTabNavigator();
 const MainStack = createStackNavigator();
@@ -94,6 +95,7 @@ const ScollableFamilyMemberDetail = createScrollableScreen(
 );
 const ScrollableCarePatientDetail = createScrollableScreen(CarePatientDetails);
 const ScrollableGameNavigation = createScrollableScreen(GameNavigation);
+const ScrollableLocationScreen = createScrollableScreen(LocationDisplay);
 const HomeStackNavigator = () => {
   const { t } = useTranslation();
   return (
@@ -148,6 +150,10 @@ const HomeStackNavigator = () => {
       <HomeStack.Screen
         name="GameNavigation"
         component={ScrollableGameNavigation}
+      />
+      <HomeStack.Screen
+        name="LocationScreen"
+        component={ScrollableLocationScreen}
       />
     </HomeStack.Navigator>
   );
@@ -248,18 +254,12 @@ const AppNavigator = () => {
             name="DetailsGathering"
             component={DetailsGatheringScreen}
           />
-          <MainStack.Screen
-            name="CalmTaps"
-            component={CalmTaps}
-          />
+          <MainStack.Screen name="CalmTaps" component={CalmTaps} />
           <MainStack.Screen
             name="BreathingExerciseGame"
             component={BreathingExerciseGame}
           />
-          <MainStack.Screen
-            name="MazeGame"
-            component={MazeGame}
-          />
+          <MainStack.Screen name="MazeGame" component={MazeGame} />
 
           {/* Main App */}
           <MainStack.Screen
