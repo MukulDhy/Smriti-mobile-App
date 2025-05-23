@@ -69,7 +69,7 @@ const WelcomeScreen = ({ navigation }) => {
       />
 
       {/* App Name */}
-      <Text style={styles.title}>Mind Easy</Text>
+      <Text style={styles.title}>SMRITI</Text>
 
       {/* Alzheimer Patient Image */}
       <Image
