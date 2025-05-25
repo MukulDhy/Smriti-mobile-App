@@ -1,0 +1,9 @@
+node_modules
+.idea
+.vscode
+backend
+code_export
+ExtraCode
+project_exports
+main.py
+*.md
