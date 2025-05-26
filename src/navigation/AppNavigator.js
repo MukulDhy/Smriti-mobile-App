@@ -51,6 +51,8 @@ import MazeGame from "../screens/Games/MatchingFacesGame";
 import LocationDisplay from "../screens/AdditionalScreen/LocationDisplay";
 import { navigationRef } from "../utils/NavigationService";
 import VoiceDetectionScreen from "../screens/AdditionalScreen/VoiceDetectionScreen";
+import AIVoiceAssistantScreen from "../screens/AI_Voice_Assistant/AIVoiceAssistantScreen";
+import OnBoardingScreen from "../screens/AI_Voice_Assistant/OnBoardingScreen";
 
 const Tab = createBottomTabNavigator();
 const MainStack = createStackNavigator();
@@ -108,7 +110,7 @@ const HomeStackNavigator = () => {
       <HomeStack.Screen
         name="HomeScreen" // Changed from "Home" to "HomeScreen"
         component={ScrollableHomeScreen}
-        options={{ headerShown: true, title: t("home") }}
+        options={{ headerShown: true, title: t("home"), gestureEnabled: false }}
       />
       <HomeStack.Screen
         name="EmergencyScreen"
@@ -270,6 +272,20 @@ const AppNavigator = () => {
             component={BreathingExerciseGame}
           />
           <MainStack.Screen name="MazeGame" component={MazeGame} />
+          <MainStack.Screen
+            name="OnBoarding"
+            component={OnBoardingScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <MainStack.Screen
+            name="AiVoiceAssistant"
+            component={AIVoiceAssistantScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
 
           {/* Main App */}
           <MainStack.Screen

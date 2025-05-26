@@ -155,19 +155,19 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.row}>
           <TouchableOpacity
             style={[styles.box, styles.box5]}
-            onPress={() => navigation.navigate("VoiceDetectorPage")}
+            onPress={() => navigation.navigate("OnBoarding")}
           >
-            <Text style={styles.boxTitleWhite}>Remidner page</Text>
-            <Text style={styles.boxDescWhite}>See all Scheduled Reminder.</Text>
+            <Text style={styles.boxTitleWhite}>AI Voice Assistant</Text>
+            <Text style={styles.boxDescWhite}>
+              Help to talk to the AI and give your Answers
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.box, styles.box2]}
             onPress={() => navigation.navigate("ReminderScreen")}
           >
             <Text style={styles.boxTitleBlack}>Reminder screen</Text>
-            <Text style={styles.boxDescBlack}>
-              Meditation and stress relief.
-            </Text>
+            <Text style={styles.boxDescBlack}>See all Scheduled Reminder.</Text>
           </TouchableOpacity>
         </View>
         {/* Row 4 */}
