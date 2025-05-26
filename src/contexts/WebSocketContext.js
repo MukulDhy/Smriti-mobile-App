@@ -19,6 +19,7 @@ export const WebSocketProvider = ({ children }) => {
   const authTimeoutRef = useRef(null);
   const reconnectAttemptsRef = useRef(0);
   const maxReconnectAttempts = 5;
+  const messageQueue = useRef([]);
 
   // Heartbeat system
   useEffect(() => {
@@ -62,10 +63,9 @@ export const WebSocketProvider = ({ children }) => {
       socket.close();
     }
 
-    const wsUrl = new URL(WS_URL);
-    wsUrl.searchParams.set("token", encodeURIComponent(userToken));
-
-    const ws = new WebSocket(wsUrl.toString());
+    const ws = new WebSocket(
+      `${WS_URL}?token=${encodeURIComponent(userToken)}`
+    );
 
     // Set authentication timeout (8 seconds)
     authTimeoutRef.current = setTimeout(() => {
@@ -77,8 +77,11 @@ export const WebSocketProvider = ({ children }) => {
 
     ws.onopen = () => {
       setIsConnected(true);
-      reconnectAttemptsRef.current = 0; // Reset on successful connection
+      reconnectAttemptsRef.current = 0;
       console.log("WebSocket connected, waiting for authentication...");
+
+      // Process any queued messages
+      flushMessageQueue();
     };
 
     ws.onmessage = (e) => {
@@ -89,7 +92,6 @@ export const WebSocketProvider = ({ children }) => {
           message.type === "connection" &&
           message.status === "authenticated"
         ) {
-          // Clear timeout on successful authentication
           clearTimeout(authTimeoutRef.current);
           setIsAuthenticated(true);
           console.log("WebSocket authenticated successfully");
@@ -117,7 +119,6 @@ export const WebSocketProvider = ({ children }) => {
       setIsAuthenticated(false);
       console.log(`Disconnected: ${e.code} ${e.reason}`);
 
-      // Only reconnect if it wasn't an auth failure and we have attempts left
       if (
         e.code !== 1008 &&
         reconnectAttemptsRef.current < maxReconnectAttempts
@@ -137,12 +138,21 @@ export const WebSocketProvider = ({ children }) => {
     setSocket(ws);
   };
 
+  const flushMessageQueue = () => {
+    if (socket?.readyState === WebSocket.OPEN && isAuthenticated) {
+      while (messageQueue.current.length > 0) {
+        const message = messageQueue.current.shift();
+        socket.send(JSON.stringify(message));
+      }
+    }
+  };
+
   const handleIncomingMessage = (message) => {
     switch (message.type) {
-      case "reminder":
+      case "startRecording":
         Alert.alert(
-          "Reminder",
-          `${message.data.title}\n${message.data.description}`,
+          "Recording Triggered",
+          "Starting voice recording as requested",
           [{ text: "OK" }]
         );
         break;
@@ -160,13 +170,29 @@ export const WebSocketProvider = ({ children }) => {
         console.error("Failed to send message:", err);
         return false;
       }
+    } else {
+      // Queue the message if not ready
+      messageQueue.current.push(message);
+      return false;
     }
-    return false;
+  };
+
+  const registerUser = (userId) => {
+    return sendMessage({
+      type: "registerUser",
+      userId,
+    });
   };
 
   return (
     <WebSocketContext.Provider
-      value={{ socket, isConnected, isAuthenticated, sendMessage }}
+      value={{
+        socket,
+        isConnected,
+        isAuthenticated,
+        sendMessage,
+        registerUser,
+      }}
     >
       {children}
     </WebSocketContext.Provider>

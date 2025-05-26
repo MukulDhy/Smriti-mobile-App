@@ -174,7 +174,7 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.row}>
           <TouchableOpacity
             style={[styles.box, styles.box2]}
-            onPress={() => navigation.navigate("VoiceDetectorScreen")}
+            onPress={() => navigation.navigate("VoiceDetectionScreen")}
           >
             <Text style={styles.boxTitleBlack}>Voice Detection</Text>
             <Text style={styles.boxDescBlack}>

@@ -9,7 +9,6 @@ import { useDispatch } from "react-redux";
 import API_BASE_URL from "./config";
 import { useAuth } from "./contexts/AuthContext";
 // import { useLocation } from './LocationContext';
-
 const App = () => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
