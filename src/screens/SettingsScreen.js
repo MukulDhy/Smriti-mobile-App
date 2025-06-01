@@ -12,6 +12,7 @@ import { useTheme } from "../themes/ThemeContext";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../features/auth/authSlice";
+import LanguageSelectorModal from "./LanguageSelectorModal";
 
 const SettingsScreen = ({ navigation }) => {
   // Get theme context with proper error handling
@@ -22,6 +23,7 @@ const SettingsScreen = ({ navigation }) => {
     isDarkMode: false,
   };
 
+  const [isLangModalVisible, setLangModalVisible] = React.useState(false);
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
@@ -187,7 +189,7 @@ const SettingsScreen = ({ navigation }) => {
             />
           ),
         })}
-        {renderListItem({
+        {/* {renderListItem({
           icon: "🌐",
           title: t("language"),
           description: i18n.language === "en" ? "English" : "हिन्दी",
@@ -202,7 +204,25 @@ const SettingsScreen = ({ navigation }) => {
               }}
             />
           ),
+        })} */}
+        {renderListItem({
+          icon: "🌐",
+          title: t("language"),
+          description:
+            i18n.language === "en"
+              ? "English"
+              : i18n.language === "hi"
+              ? "हिन्दी"
+              : i18n.language === "kn"
+              ? "Kannada"
+              : "Tamil",
+          onPress: () => setLangModalVisible(true),
         })}
+
+        <LanguageSelectorModal
+          isVisible={isLangModalVisible}
+          onClose={() => setLangModalVisible(false)}
+        />
       </View>
 
       <View
