@@ -98,14 +98,14 @@ const HomeScreen = ({ navigation }) => {
             style={[styles.boxInfo, styles.box2]}
             onPress={() => navigation.navigate("FamilyMemDetails")}
           >
-            <Text style={styles.boxTitleBlack}>Friends & Family</Text>
+            <Text style={styles.boxTitleBlack}>{t("friendsFamily")}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.boxInfo, styles.box5]}
             onPress={() => navigation.navigate("CarePatientDetails")}
           >
             <Text style={styles.boxTitleWhite}>
-              {user?.userType === "patient" ? "Caregiver" : "Patient"}
+              {user?.userType === "patient" ? t("caregiver") : t("patient")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -113,7 +113,7 @@ const HomeScreen = ({ navigation }) => {
 
       {/* "How can we help you today?" Text */}
       <View style={styles.helloContainer}>
-        <Text style={styles.helloText}>How can we help you today?</Text>
+        <Text style={styles.helloText}>{t("howCanWeHelp")}</Text>
       </View>
 
       {/* Boxes Section */}
@@ -124,12 +124,16 @@ const HomeScreen = ({ navigation }) => {
             style={[styles.box, styles.box1]}
             onPress={() => navigation.navigate("FriendsFamilyMemoriesScreen")}
           >
-            <Text style={styles.boxTitleWhite}>Friends & Family Memories</Text>
-            <Text style={styles.boxDescWhite}>Relive and share moments.</Text>
+            <Text style={styles.boxTitleWhite}>
+              {t("friendsFamilyMemories")}
+            </Text>
+            <Text style={styles.boxDescWhite}>{t("reliveMoments")}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.box, styles.box2]}>
-            <Text style={styles.boxTitleBlack}>Personalized Care Plan</Text>
-            <Text style={styles.boxDescBlack}>Track health and treatment.</Text>
+            <Text style={styles.boxTitleBlack}>
+              {t("personalizedCarePlan")}
+            </Text>
+            <Text style={styles.boxDescBlack}>{t("trackHealth")}</Text>
           </TouchableOpacity>
         </View>
         {/* Row 2 */}
@@ -138,17 +142,17 @@ const HomeScreen = ({ navigation }) => {
             style={[styles.box, styles.box3]}
             onPress={() => navigation.navigate("SensorDataScreen")}
           >
-            <Text style={styles.boxTitleBlack}>Sensor Data</Text>
-            <Text style={styles.boxDescBlack}>Monitor health metrics.</Text>
+            <Text style={styles.boxTitleBlack}>{t("sensorData")}</Text>
+            <Text style={styles.boxDescBlack}>{t("monitorHealth")}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.box, styles.box4]}
             onPress={() => navigation.navigate("GameNavigation")}
           >
-            <Text style={styles.boxTitleBlack}>Mindfulness & Relaxation</Text>
-            <Text style={styles.boxDescBlack}>
-              Meditation and stress relief.
+            <Text style={styles.boxTitleBlack}>
+              {t("mindfulnessRelaxation")}
             </Text>
+            <Text style={styles.boxDescBlack}>{t("meditationStress")}</Text>
           </TouchableOpacity>
         </View>
         {/* Row 3 */}
@@ -157,17 +161,15 @@ const HomeScreen = ({ navigation }) => {
             style={[styles.box, styles.box5]}
             onPress={() => navigation.navigate("OnBoarding")}
           >
-            <Text style={styles.boxTitleWhite}>AI Voice Assistant</Text>
-            <Text style={styles.boxDescWhite}>
-              Help to talk to the AI and give your Answers
-            </Text>
+            <Text style={styles.boxTitleWhite}>{t("aiVoiceAssistant")}</Text>
+            <Text style={styles.boxDescWhite}>{t("aiHelp")}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.box, styles.box2]}
             onPress={() => navigation.navigate("ReminderScreen")}
           >
-            <Text style={styles.boxTitleBlack}>Reminder screen</Text>
-            <Text style={styles.boxDescBlack}>See all Scheduled Reminder.</Text>
+            <Text style={styles.boxTitleBlack}>{t("reminderScreen")}</Text>
+            <Text style={styles.boxDescBlack}>{t("seeReminders")}</Text>
           </TouchableOpacity>
         </View>
         {/* Row 4 */}
@@ -176,17 +178,15 @@ const HomeScreen = ({ navigation }) => {
             style={[styles.box, styles.box2]}
             onPress={() => navigation.navigate("VoiceDetectionScreen")}
           >
-            <Text style={styles.boxTitleBlack}>Voice Detection</Text>
-            <Text style={styles.boxDescBlack}>
-              Detect the person who is speaking in the envirnoment.
-            </Text>
+            <Text style={styles.boxTitleBlack}>{t("voiceDetection")}</Text>
+            <Text style={styles.boxDescBlack}>{t("detectPerson")}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.box, styles.box6]}
             onPress={() => navigation.navigate("LocationScreen")}
           >
-            <Text style={styles.boxTitleWhite}>Location page</Text>
-            <Text style={styles.boxDescWhite}>See the patient location.</Text>
+            <Text style={styles.boxTitleWhite}>{t("locationPage")}</Text>
+            <Text style={styles.boxDescWhite}>{t("seeLocation")}</Text>
           </TouchableOpacity>
         </View>
       </View>
