@@ -39,6 +39,8 @@
     "install": "^0.13.0",
     "jsonwebtoken": "^9.0.2",
     "lottie-react-native": "^7.2.2",
+    "lucide-react": "^0.517.0",
+    "lucide-react-native": "^0.516.0",
     "mongoose": "^8.10.1",
     "react": "19.0.0",
     "react-i18next": "^15.5.1",

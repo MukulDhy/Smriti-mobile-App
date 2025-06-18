@@ -90,6 +90,15 @@ const HomeScreen = ({ navigation }) => {
         </View>
       </View>
 
+      <View style={styles.boxContainer1}>
+        {/* Row 1 */}
+        <TouchableOpacity
+          style={[styles.boxInfoLarger, styles.box2]}
+          onPress={() => navigation.navigate("FamilyMemDetails")}
+        >
+          <Text style={styles.boxTitleBlack}>{t("friendsFamily")}</Text>
+        </TouchableOpacity>
+      </View>
       {/* Adding the Details of the of the patient and caregiver and family mmbers  */}
       <View style={styles.boxContainer1}>
         {/* Row 1 */}
@@ -179,6 +188,23 @@ const HomeScreen = ({ navigation }) => {
             onPress={() => navigation.navigate("VoiceDetectionScreen")}
           >
             <Text style={styles.boxTitleBlack}>{t("voiceDetection")}</Text>
+            <Text style={styles.boxDescBlack}>{t("detectPerson")}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.box, styles.box6]}
+            onPress={() => navigation.navigate("LocationScreen")}
+          >
+            <Text style={styles.boxTitleWhite}>{t("locationPage")}</Text>
+            <Text style={styles.boxDescWhite}>{t("seeLocation")}</Text>
+          </TouchableOpacity>
+        </View>
+        {/* Row 5 */}
+        <View style={styles.row}>
+          <TouchableOpacity
+            style={[styles.box, styles.box2]}
+            onPress={() => navigation.navigate("AudioStream")}
+          >
+            <Text style={styles.boxTitleBlack}>{"audio stream"}</Text>
             <Text style={styles.boxDescBlack}>{t("detectPerson")}</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -300,6 +326,21 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
+  },
+  boxInfoLarger: {
+    width: "90%",
+    height: 60,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    backgroundColor: "#",
   },
   box1: {
     backgroundColor: "#FF69B4",

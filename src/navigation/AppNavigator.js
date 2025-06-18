@@ -53,6 +53,9 @@ import { navigationRef } from "../utils/NavigationService";
 import VoiceDetectionScreen from "../screens/AdditionalScreen/VoiceDetectionScreen";
 import AIVoiceAssistantScreen from "../screens/AI_Voice_Assistant/AIVoiceAssistantScreen";
 import OnBoardingScreen from "../screens/AI_Voice_Assistant/OnBoardingScreen";
+// import AudioStreamScreen from "../screens/AudioStreaming/AudioStreamScreen";
+import AudioAnalyzerScreen from "../screens/AudioStreaming/AudioAnalyzerScreen";
+import ESP32Dashboard from "../screens/SensorScreen/SensorScreen";
 
 const Tab = createBottomTabNavigator();
 const MainStack = createStackNavigator();
@@ -100,6 +103,8 @@ const ScollableFamilyMemberDetail = createScrollableScreen(
 const ScrollableCarePatientDetail = createScrollableScreen(CarePatientDetails);
 const ScrollableGameNavigation = createScrollableScreen(GameNavigation);
 const ScrollableLocationScreen = createScrollableScreen(LocationDisplay);
+const ScrollableAudioStreamScreen = createScrollableScreen(AudioAnalyzerScreen);
+const ScrollableEsp32Dash = createScrollableScreen(ESP32Dashboard);
 
 const ScrollableVoiceDetectionScreen =
   createScrollableScreen(VoiceDetectionScreen);
@@ -162,6 +167,12 @@ const HomeStackNavigator = () => {
         name="LocationScreen"
         component={ScrollableLocationScreen}
       />
+      <HomeStack.Screen
+        name="AudioStream"
+        component={ScrollableAudioStreamScreen}
+      />
+      <HomeStack.Screen name="Esp32DashBoard" component={ScrollableEsp32Dash} />
+
       <HomeStack.Screen
         name="VoiceDetectionScreen"
         component={ScrollableVoiceDetectionScreen}

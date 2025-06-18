@@ -52,7 +52,7 @@ export default function OnBoardingScreen({ navigation }) {
 
   return (
     <LinearGradient
-      colors={["#250152", "#000000"]}
+      colors={["#679312", "#000000"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}
