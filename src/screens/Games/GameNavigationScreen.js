@@ -27,6 +27,41 @@ const GameNavigation = () => {
       description: "Navigate through puzzles to focus",
       color: "#FFDAC1",
     },
+    {
+      name: "ProfileGameScreen",
+      title: "pro Game",
+      icon: "🧩",
+      description: "Navigate through puzzles to focus",
+      color: "#FFDAC1",
+    },
+    {
+      name: "MemoryGame",
+      title: "new Game",
+      icon: "🧩",
+      description: "Navigate through puzzles to focus",
+      color: "#FFDAC1",
+    },
+    {
+      name: "MemoryWallScreen",
+      title: "MemoryWall Game",
+      icon: "🧩",
+      description: "Navigate through puzzles to focus",
+      color: "#FFDAC1",
+    },
+      {
+      name: "Remember",
+      title: "Remember Game",
+      icon: "🧩",
+      description: "Navigate through puzzles to focus",
+      color: "#FFDAC1",
+    },
+    {
+      name: "Patientmonitering",
+      title: "Patientmonitering Game",
+      icon: "🧩",
+      description: "Navigate through puzzles to focus",
+      color: "#FFDAC1",
+    },
   ];
 
   return (
