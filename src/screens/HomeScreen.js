@@ -94,9 +94,9 @@ const HomeScreen = ({ navigation }) => {
         {/* Row 1 */}
         <TouchableOpacity
           style={[styles.boxInfoLarger, styles.box2]}
-          onPress={() => navigation.navigate("FamilyMemDetails")}
+          onPress={() => navigation.navigate("ESP32Dash")}
         >
-          <Text style={styles.boxTitleBlack}>{t("friendsFamily")}</Text>
+          <Text style={styles.boxTitleBlack}>ESP32 DASHBOARD</Text>
         </TouchableOpacity>
       </View>
       {/* Adding the Details of the of the patient and caregiver and family mmbers  */}

@@ -218,7 +218,7 @@ export const WebSocketProvider = ({ children }) => {
       console.log("Heartbeat acknowledged");
       return;
     }
-
+    console.log(message)
     // Handle audio data messages from backend
     if (message.type === "audio-data" && message.data) {
       try {

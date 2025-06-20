@@ -6,63 +6,64 @@ const GameNavigation = () => {
   const navigation = useNavigation();
 
   const games = [
-    {
-      name: "CalmTaps",
-      title: "Calm Taps",
-      icon: "👆",
-      description: "Tap rhythmically to calm your mind",
-      color: "#FF9AA2",
-    },
-    {
-      name: "BreathingExerciseGame",
-      title: "Breathing Exercise",
-      icon: "🌬️",
-      description: "Follow the pattern to regulate breathing",
-      color: "#FFB7B2",
-    },
-    {
-      name: "MazeGame",
-      title: "Maze Game",
-      icon: "🧩",
-      description: "Navigate through puzzles to focus",
-      color: "#FFDAC1",
-    },
-    {
-      name: "ProfileGameScreen",
-      title: "pro Game",
-      icon: "🧩",
-      description: "Navigate through puzzles to focus",
-      color: "#FFDAC1",
-    },
-    {
-      name: "MemoryGame",
-      title: "new Game",
-      icon: "🧩",
-      description: "Navigate through puzzles to focus",
-      color: "#FFDAC1",
-    },
-    {
-      name: "MemoryWallScreen",
-      title: "MemoryWall Game",
-      icon: "🧩",
-      description: "Navigate through puzzles to focus",
-      color: "#FFDAC1",
-    },
-      {
-      name: "Remember",
-      title: "Remember Game",
-      icon: "🧩",
-      description: "Navigate through puzzles to focus",
-      color: "#FFDAC1",
-    },
-    {
-      name: "Patientmonitering",
-      title: "Patientmonitering Game",
-      icon: "🧩",
-      description: "Navigate through puzzles to focus",
-      color: "#FFDAC1",
-    },
-  ];
+  {
+    name: "CalmTaps",
+    title: "Calm Taps",
+    icon: "👆",
+    description: "Tap rhythmically to calm your mind",
+    color: "#FF9AA2",
+  },
+  {
+    name: "BreathingExerciseGame",
+    title: "Breathing Exercise",
+    icon: "🌬️",
+    description: "Follow the pattern to regulate breathing",
+    color: "#FFB7B2",
+  },
+  {
+    name: "MazeGame",
+    title: "Maze Game",
+    icon: "🌀",
+    description: "Navigate through puzzles to focus",
+    color: "#FFDAC1",
+  },
+  {
+    name: "ProfileGameScreen",
+    title: "Pro Game",
+    icon: "🎯",
+    description: "Sharpen your focus with challenges",
+    color: "#E2F0CB",
+  },
+  {
+    name: "MemoryGame",
+    title: "Memory Game",
+    icon: "🧠",
+    description: "Boost memory with fun tasks",
+    color: "#B5EAD7",
+  },
+  {
+    name: "MemoryWallScreen",
+    title: "MemoryWall Game",
+    icon: "📝",
+    description: "Match and remember the patterns",
+    color: "#C7CEEA",
+  },
+  {
+    name: "Remember",
+    title: "Remember Game",
+    icon: "💡",
+    description: "Strengthen recall and attention",
+    color: "#D5AAFF",
+  },
+  {
+    name: "Patientmonitering",
+    title: "Patient Monitoring",
+    icon: "❤️",
+    description: "Track patient health and stats",
+    color: "#FFCCCB",
+  },
+];
+
 
   return (
     <View style={styles.container}>

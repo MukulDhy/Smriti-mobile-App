@@ -56,6 +56,12 @@ import OnBoardingScreen from "../screens/AI_Voice_Assistant/OnBoardingScreen";
 // import AudioStreamScreen from "../screens/AudioStreaming/AudioStreamScreen";
 import AudioAnalyzerScreen from "../screens/AudioStreaming/AudioAnalyzerScreen";
 import ESP32Dashboard from "../screens/SensorScreen/SensorScreen";
+import FamilyGuessingGame from "../screens/Games/ProfileScreenGame";
+import ObjectTrackerScreen from "../screens/Games/Remember";
+import PatientMonitoringDashboard from "../screens/Games/Patientmonitoring";
+import MemoryWallScreen from "../screens/Games/Memorywall";
+import MemoryGameScreen from "../screens/Games/newgame";
+import ESP32DashboardMoniter from "../screens/Esp32DashBoard/Esp32Dash";
 
 const Tab = createBottomTabNavigator();
 const MainStack = createStackNavigator();
@@ -105,7 +111,8 @@ const ScrollableGameNavigation = createScrollableScreen(GameNavigation);
 const ScrollableLocationScreen = createScrollableScreen(LocationDisplay);
 const ScrollableAudioStreamScreen = createScrollableScreen(AudioAnalyzerScreen);
 const ScrollableEsp32Dash = createScrollableScreen(ESP32Dashboard);
-
+const ScrollableObjectTrackerScreen = createScrollableScreen(ObjectTrackerScreen);
+const ScrollableESP32Dashboard = createScrollableScreen(ESP32DashboardMoniter);
 const ScrollableVoiceDetectionScreen =
   createScrollableScreen(VoiceDetectionScreen);
 const HomeStackNavigator = () => {
@@ -171,11 +178,16 @@ const HomeStackNavigator = () => {
         name="AudioStream"
         component={ScrollableAudioStreamScreen}
       />
-      <HomeStack.Screen name="Esp32DashBoard" component={ScrollableEsp32Dash} />
+      {/* <HomeStack.Screen name="Esp32DashBoard" component={ScrollableEsp32Dash} /> */}
 
       <HomeStack.Screen
         name="VoiceDetectionScreen"
         component={ScrollableVoiceDetectionScreen}
+        // options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="ESP32Dash"
+        component={ScrollableESP32Dashboard}
         // options={{ headerShown: false }}
       />
     </HomeStack.Navigator>
@@ -297,6 +309,11 @@ const AppNavigator = () => {
               headerShown: false,
             }}
           />
+          <MainStack.Screen name="ProfileGameScreen" component={FamilyGuessingGame} />
+<MainStack.Screen name="MemoryGame" component={MemoryGameScreen} />
+<MainStack.Screen name="MemoryWallScreen" component={MemoryWallScreen} />
+<MainStack.Screen name="Remember" component={ScrollableObjectTrackerScreen} />
+<MainStack.Screen name="Patientmonitering" component={PatientMonitoringDashboard} />
 
           {/* Main App */}
           <MainStack.Screen
