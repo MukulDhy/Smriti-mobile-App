@@ -62,6 +62,20 @@ const GameNavigation = () => {
     description: "Track patient health and stats",
     color: "#FFCCCB",
   },
+  {
+    name: "NightDetection",
+    title: "Night Detection",
+    icon: "❤️",
+    description: "Track patient health and stats",
+    color: "#FFCCCB",
+  },
+   {
+    name: "LocationGeo",
+    title: "Location Geo Fancing",
+    icon: "❤️",
+    description: "Find Patient  stats",
+    color: "#FFCCCB",
+  },
 ];
 
 

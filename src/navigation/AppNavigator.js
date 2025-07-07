@@ -62,6 +62,8 @@ import PatientMonitoringDashboard from "../screens/Games/Patientmonitoring";
 import MemoryWallScreen from "../screens/Games/Memorywall";
 import MemoryGameScreen from "../screens/Games/newgame";
 import ESP32DashboardMoniter from "../screens/Esp32DashBoard/Esp32Dash";
+import NightWanderingDetector from "../screens/AdditionalScreen/NightDetection";
+import LocationRadiusTracker from "../screens/AdditionalScreen/LocationGeoFancing";
 
 const Tab = createBottomTabNavigator();
 const MainStack = createStackNavigator();
@@ -295,6 +297,8 @@ const AppNavigator = () => {
             component={BreathingExerciseGame}
           />
           <MainStack.Screen name="MazeGame" component={MazeGame} />
+          <MainStack.Screen name="NightDetection" component={NightWanderingDetector} />
+           <MainStack.Screen name="LocationGeo" component={LocationRadiusTracker} />
           <MainStack.Screen
             name="OnBoarding"
             component={OnBoardingScreen}
